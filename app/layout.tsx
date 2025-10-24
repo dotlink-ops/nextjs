@@ -1,6 +1,27 @@
 // app/layout.tsx
 import type { Metadata } from 'next'
 
+const isProd = process.env.NEXT_PUBLIC_ENV === 'production'
+
+export const metadata: Metadata = {
+  title: 'Avidelta',
+  description: 'Avidelta — advisory & ops systems.',
+  robots: { index: isProd, follow: isProd },
+  // optional canonical base for OG/Twitter URLs when public:
+  metadataBase: isProd ? new URL('https://yourdomain.com') : undefined,
+}
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+
+// app/layout.tsx
+import type { Metadata } from 'next'
+
 export const metadata: Metadata = {
   title: 'Avidelta',
   description: 'Avidelta — advisory & ops systems.',
