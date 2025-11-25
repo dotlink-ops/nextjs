@@ -1,0 +1,16 @@
+{
+  "date": "2025-11-25",
+  "repo": "dotlink-ops/nextjs",
+  "summary_bullets": [
+    "Got the daily automation pipeline running end-to-end on local machine.",
+    "Integrated OpenAI, GitHub issue logging, and local TXT/DOCX/XLSX outputs.",
+    "Added a structured JSON snapshot for use in the Next.js/Codex portfolio."
+  ],
+  "action_items": [
+    "Hook /api/daily-summary into a simple UI component on the Next.js landing page.",
+    "Iterate on the Summary/Actions prompt to better match real daily workflow.",
+    "Decide how often to sync local automation JSON into the repo (manual or scripted)."
+  ],
+  "raw_text": "Summary:\n- Got the daily automation pipeline running end-to-end on local machine.\n- Integrated OpenAI, GitHub issue logging, and local TXT/DOCX/XLSX outputs.\n- Added a structured JSON snapshot for use in the Next.js/Codex portfolio.\n\nActions:\n- Hook /api/daily-summary into a simple UI component on the Next.js landing page.\n- Iterate on the Summary/Actions prompt to better match real daily workflow.\n- Decide how often to sync local automation JSON into the repo (manual or scripted).",
+  "created_at": "2025-11-25T12:05:00"
+}
