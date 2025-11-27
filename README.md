@@ -34,3 +34,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## GitHub Actions secrets
+
+Configure the following repository secrets and variables under **Settings → Secrets and variables → Actions** to support automation and optional integrations:
+
+- `OPENAI_API_KEY`: Required for scripts that call the OpenAI API.
+
+Optional email settings (set these if enabling email features):
+
+- `SMTP_SERVER` (e.g., `smtp.gmail.com`)
+- `SMTP_PORT` (e.g., `587`)
+- `SMTP_USERNAME`
+- `SMTP_PASSWORD` (use an app password or similar)
+- `EMAIL_FROM`
+- `EMAIL_TO`
+
+Optional Notion integration settings:
+
+- `NOTION_WEBHOOK_URL` (or your proxy URL)
+- `NOTION_API_TOKEN` (for direct Notion API usage)
+
+You can populate just the variables you need today and leave placeholders for future growth.
