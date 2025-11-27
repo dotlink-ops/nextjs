@@ -16,7 +16,7 @@ const features = [
   {
     title: "Insights without waiting",
     description:
-      "Forecast retention, monitor adoption, and surface churn risks in realtime dashboards built for revenue and success teams.",
+      "Forecast retention, monitor adoption, and surface churn risks in real-time dashboards built for revenue and success teams.",
     icon: "/feature-insights.svg",
   },
 ];
