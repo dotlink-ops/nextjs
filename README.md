@@ -105,7 +105,31 @@ cat output/daily_summary.json | jq
 - **Python 3.11+**
 - **Git**
 
-### Installation (5 minutes)
+### One-Command Setup ⭐
+
+```bash
+# Clone repository
+git clone https://github.com/dotlink-ops/nextjs.git
+cd nextjs
+
+# Run automated setup (Python + Next.js)
+./setup.sh
+```
+
+**What the setup script does:**
+1. ✅ Checks prerequisites (Python 3, Node.js, npm)
+2. ✅ Creates Python virtual environment (venv/)
+3. ✅ Installs Python dependencies (openai, PyGithub, python-dotenv)
+4. ✅ Installs Node.js dependencies (Next.js, React, TypeScript)
+5. ✅ Creates .env.local from template
+6. ✅ Sets up output directories
+7. ✅ Provides clear next steps
+
+**Time to complete:** ~2-3 minutes (depending on internet speed)
+
+### Manual Installation (Alternative)
+
+If you prefer manual setup or need more control:
 
 ```bash
 # 1. Clone repository
