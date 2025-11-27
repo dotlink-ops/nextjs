@@ -103,7 +103,26 @@ curl -sS http://localhost:3000/api/status | jq
 
 ## Demo / Deployment
 
-This project is Vercel-ready. See `DEMO.md` for local walkthrough steps and sample outputs used for demos.
+**Live Deployment:** https://avidelta.vercel.app
+
+**Key API Endpoints:**
+- 🏠 Home: https://avidelta.vercel.app
+- ✅ Status: https://avidelta.vercel.app/api/status
+- 📊 Daily Summary: https://avidelta.vercel.app/api/daily-summary
+- 🎭 Demo View: https://avidelta.vercel.app/api/demo/view
+- ❤️ Health: https://avidelta.vercel.app/api/health
+- 🤖 Robots: https://avidelta.vercel.app/robots.txt
+- 🗺️ Sitemap: https://avidelta.vercel.app/sitemap.xml
+
+**Quick Verification:**
+```bash
+# Test all endpoints
+curl -sS https://avidelta.vercel.app/api/status | jq
+curl -sS https://avidelta.vercel.app/api/daily-summary | jq
+curl -sS https://avidelta.vercel.app/api/health
+```
+
+This project is Vercel-ready with automatic GitHub integration. See `DEMO.md` for local walkthrough steps and sample outputs used for demos.
 
 ## Portfolio notes (for clients)
 
@@ -174,24 +193,14 @@ vercel --prod
 
 **Automatic Deployments:**
 - ✅ **Production:** Every push to `main` → auto-deploy to `https://avidelta.vercel.app`
-- ✅ **Preview:** Every PR → unique preview URL (e.g., `nextjs-git-feature-dotlink-ops.vercel.app`)
-- ✅ **Instant verification:** Use health endpoints in PR descriptions
+- ✅ **Preview:** Every PR → unique preview URL with comment containing live links
+- ✅ **Health checks:** Each preview includes links to `/api/status`, `/api/daily-summary`, and `/api/health`
 
-**PR Template with Health Checks:**
-
-```markdown
-## Changes
-- [description]
-
-## Health Checks
-- Preview: https://[pr-preview-url].vercel.app
-- Status: https://[pr-preview-url].vercel.app/api/healthz
-- Daily Summary: https://[pr-preview-url].vercel.app/api/daily-summary
-- Full Status: https://[pr-preview-url].vercel.app/api/status
-
-## Testing
-curl https://[pr-preview-url].vercel.app/api/healthz | jq
-```
+**Vercel automatically comments on PRs with:**
+- 🔗 Preview URL
+- ✅ Status endpoint: `[preview-url]/api/status`
+- 📊 Daily Summary: `[preview-url]/api/daily-summary`
+- ❤️ Health check: `[preview-url]/api/health`
 
 **Environment Variables** (if needed):
 - Add any API keys or secrets in Vercel dashboard → Settings → Environment Variables
@@ -200,8 +209,12 @@ curl https://[pr-preview-url].vercel.app/api/healthz | jq
 ### Pre-deploy Checklist
 - ✅ Remove any secrets from code (use environment variables)
 - ✅ Test all API routes locally: `/api/health`, `/api/status`, `/api/daily-summary`, `/api/demo`
-- ✅ Update SEO metadata in `app/layout.tsx` if needed
-- ✅ Verify build: `npm run build`
+- ✅ Verify `app/layout.tsx` has complete metadata (title, description, OG tags, robots)
+- ✅ Verify `robots.ts` exists and generates `/robots.txt`
+- ✅ Verify `sitemap.ts` exists and generates `/sitemap.xml`
+- ✅ Clean up `vercel.json` (remove auto-detected settings)
+- ✅ Test build: `npm run build`
+- ✅ Verify preview deployments work on PRs
 
 ### Verify Deployment
 
