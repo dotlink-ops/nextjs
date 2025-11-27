@@ -27,7 +27,7 @@ const testimonials = [
 export function Testimonials() {
   return (
     <section
-      id="demo"
+      id="testimonials"
       className="bg-gradient-to-b from-slate-50 via-white to-white py-16 text-slate-900 dark:from-black dark:via-slate-950 dark:to-slate-950 dark:text-white"
     >
       <div className="mx-auto max-w-6xl px-6">
