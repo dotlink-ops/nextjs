@@ -15,6 +15,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Avidelta",
   description: "Avidelta — advisory & ops systems.",
+  // Prevent staging/non-production deployments from being indexed
+  robots: { index: false, follow: false },
 };
 
 export default function RootLayout({
