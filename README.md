@@ -64,6 +64,38 @@ npm run dev
 - The project intentionally does not contain any secrets. If you find keys, move them to `.env` and scrub git history.
 - See `.env.example` for expected environment variables used by any automation integrations.
 
+**Note**: `next.config.ts` was updated to set an experimental Turbo root:
+
+```ts
+// next.config.ts
+import path from 'path';
+// experimental.turbo.root: path.join(__dirname)
+```
+
+This points Turbo (app tooling) at the repository root where the app's `package.json` lives. If Next.js reports an "unrecognized key" or other warnings for `experimental.turbo`, consider removing or adjusting the experimental setting to match your installed Next.js version.
+
+## Health Endpoints
+
+- `/api/health`: Basic liveness check. Returns `{ ok: true }`.
+- `/api/healthz`: Ops-friendly health check. Returns `{ ok, commit, time }`.
+- `/api/ready`: Readiness check. Returns `{ ready: true }`.
+- `/api/version`: Version info. Returns `{ name, version, next, node, timestamp }`.
+- `/api/uptime`: Process uptime. Returns `{ uptimeSeconds, startedAt, node }`.
+- `/api/ping`: Timestamp echo. Returns `{ ok, serverTimestamp, echo }` (pass `?t=your-value`).
+- `/api/status`: Aggregated status. Returns `{ ok, ready, name, version, next, node, uptimeSeconds, startedAt, serverTimestamp }`.
+
+Quick checks:
+
+```bash
+curl -sS http://localhost:3000/api/health
+curl -sS http://localhost:3000/api/healthz | jq
+curl -sS http://localhost:3000/api/ready
+curl -sS http://localhost:3000/api/version | jq
+curl -sS http://localhost:3000/api/uptime | jq
+curl -sS "http://localhost:3000/api/ping?t=$(date -Iseconds)" | jq
+curl -sS http://localhost:3000/api/status | jq
+```
+
 ## Usage
 
 - The landing page (`app/page.tsx`) is the portfolio UI. Use it to present the automation case studies, links, and contact CTAs.
@@ -115,6 +147,25 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**One-command deployment:**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+# Install Vercel CLI (one-time)
+npm i -g vercel
+
+# Deploy to production
+vercel --prod
+```
+
+Or connect your GitHub repo to [Vercel](https://vercel.com/new) for automatic deployments on push.
+
+**Pre-deploy checklist:**
+- ✅ Remove any secrets from code (use environment variables)
+- ✅ Test all API routes locally: `/api/health`, `/api/status`, `/api/daily-summary`, `/api/demo`
+- ✅ Update SEO metadata in `app/layout.tsx` if needed
+- ✅ Verify build: `npm run build`
+
+**Environment variables** (if needed):
+- Add any API keys or secrets in Vercel dashboard → Settings → Environment Variables
+
+Check out [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

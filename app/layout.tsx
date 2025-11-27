@@ -14,9 +14,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Avidelta",
-  description: "Avidelta — advisory & ops systems.",
-  robots: { index: false, follow: false },
+  title: "Avidelta — Automation, Systems & AI",
+  description: "One-command automations, AI workflows, and developer environments.",
+  keywords: ["automation", "AI workflows", "GitHub integration", "OpenAI", "DevOps", "systems"],
+  authors: [{ name: "Avidelta" }],
+  openGraph: {
+    title: "Avidelta",
+    description: "One-command automations, AI workflows, and developer environments.",
+    url: "https://avidelta.vercel.app",
+    siteName: "Avidelta",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Avidelta — Automation, Systems & AI",
+    description: "One-command automations, AI workflows, and developer environments.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({
@@ -26,6 +41,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Vercel Analytics - automatically enabled on Vercel */}
+        {/* Add Google Analytics or other analytics here if needed */}
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
