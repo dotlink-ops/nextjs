@@ -48,12 +48,15 @@ export function Features() {
                 <h3 className="text-xl font-semibold">{feature.title}</h3>
                 <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{feature.description}</p>
               </div>
-              <button className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-300">
+              <a
+                href="#"
+                className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-300"
+              >
                 Learn more
                 <span aria-hidden className="text-base">
                   →
                 </span>
-              </button>
+              </a>
             </div>
           ))}
         </div>
