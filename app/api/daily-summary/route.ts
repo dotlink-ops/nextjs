@@ -1,18 +1,22 @@
 import { NextResponse } from "next/server";
+import { readFile } from "fs/promises";
+import path from "path";
+
+export const dynamic = "force-dynamic";
+
+const DAILY_SUMMARY_PATH = path.join(process.cwd(), "data", "daily_summary.json");
 
 export async function GET() {
-  return NextResponse.json({
-    date: "2025-11-25",
-    repo: "dotlink-ops/nextjs",
-    summary_bullets: [
-      "Got daily automation pipeline running end-to-end.",
-      "Integrated OpenAI, GitHub, and local artifacts."
-    ],
-    action_items: [
-      "Polish Next.js portfolio landing page.",
-      "Refine investor-facing automation summary."
-    ],
-    raw_text: "Summary:\\n- ...\\n\\nActions:\\n- ...",
-    created_at: "2025-11-25T11:55:23"
-  });
+  try {
+    const fileContents = await readFile(DAILY_SUMMARY_PATH, "utf-8");
+    const summary = JSON.parse(fileContents);
+
+    return NextResponse.json(summary);
+  } catch (error) {
+    console.error("Failed to load daily summary", error);
+    return NextResponse.json(
+      { error: "Failed to load daily summary" },
+      { status: 500 }
+    );
+  }
 }
