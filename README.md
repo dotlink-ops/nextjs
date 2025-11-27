@@ -20,6 +20,13 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment variables
+
+- `NEXT_PUBLIC_SITE_URL` – public canonical URL used for Open Graph/Twitter metadata (set in your hosting dashboard).
+- `NEXT_PUBLIC_ENV` – set to `production` in hosted environments to enable search indexing via the `robots` metadata.
+
+Ensure these values are configured in your hosting provider before building.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
