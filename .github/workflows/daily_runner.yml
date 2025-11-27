@@ -1,0 +1,58 @@
+name: Daily Runner Example
+
+on:
+  workflow_dispatch:
+
+jobs:
+  send-daily-briefing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # This step simulates the daily_summary.json output; replace with real generation.
+      - name: Prepare sample daily summary output
+        run: |
+          mkdir -p outputs
+          cat <<'JSON' > outputs/daily_summary.json
+          {
+            "title": "Daily Briefing",
+            "summary": "Automated daily summary payload ready for Notion.",
+            "highlights": ["Example highlight A", "Example highlight B"],
+            "generated_at": "${{ github.run_id }}"
+          }
+          JSON
+
+      # When ready, replace this example with your real webhook URL and database ID secrets.
+      - name: Call Notion webhook (real)
+        if: success()
+        env:
+          NOTION_WEBHOOK_URL: ${{ secrets.NOTION_WEBHOOK_URL }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+        run: |
+          echo "Reading daily_summary.json..."
+          SUMMARY_JSON=$(cat outputs/daily_summary.json)
+
+          echo "Building webhook payload..."
+          cat <<EOF > webhook_payload.json
+          {
+            "type": "daily_briefing",
+            "version": "v1",
+            "notion": {
+              "database_id": "${NOTION_DATABASE_ID}",
+              "parent_page_id": null
+            },
+            "github": {
+              "repository": "${GITHUB_REPOSITORY}",
+              "run_id": ${GITHUB_RUN_ID},
+              "run_url": "https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}",
+              "commit_sha": "${GITHUB_SHA}"
+            },
+            "payload": ${SUMMARY_JSON}
+          }
+          EOF
+
+          echo "Sending payload to Notion webhook proxy..."
+          curl -X POST "$NOTION_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d @webhook_payload.json
