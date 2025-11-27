@@ -1,0 +1,121 @@
+{
+  "version": "2024-12-01",
+  "event": "automation.daily_summary",
+  "delivery_id": "5b8f1f79-8b3d-4c5c-8a1c-0c2f4f3c9f28",
+  "sent_at": "2025-11-25T19:25:00Z",
+  "source": {
+    "service": "automationdotlink",
+    "environment": "production"
+  },
+  "retry": false,
+  "summary": {
+    "date": "2025-11-25",
+    "repo": "dotlink-ops/nextjs",
+    "summary_bullets": [
+      "Got daily automation pipeline running end-to-end.",
+      "Integrated OpenAI, GitHub, and local artifacts."
+    ],
+    "action_items": [
+      "Polish Next.js portfolio landing page.",
+      "Refine investor-facing automation summary."
+    ],
+    "raw_text": "Summary:\n- ...\n\nActions:\n- ...",
+    "created_at": "2025-11-25T19:25:00"
+  },
+  "notion": {
+    "parent": { "type": "database_id", "database_id": "<DATABASE_ID>" },
+    "properties": {
+      "Title": {
+        "title": [
+          {
+            "text": {
+              "content": "Daily Automation Summary · 2025-11-25 · dotlink-ops/nextjs"
+            }
+          }
+        ]
+      },
+      "Date": { "date": { "start": "2025-11-25" } },
+      "Repository": {
+        "rich_text": [ { "text": { "content": "dotlink-ops/nextjs" } } ]
+      },
+      "Delivery ID": {
+        "rich_text": [ { "text": { "content": "5b8f1f79-8b3d-4c5c-8a1c-0c2f4f3c9f28" } } ]
+      },
+      "Status": { "select": { "name": "Auto-generated" } }
+    },
+    "children": [
+      {
+        "object": "block",
+        "type": "heading_2",
+        "heading_2": {
+          "rich_text": [ { "text": { "content": "Highlights" } } ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "bulleted_list_item",
+        "bulleted_list_item": {
+          "rich_text": [
+            { "text": { "content": "Got daily automation pipeline running end-to-end." } }
+          ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "bulleted_list_item",
+        "bulleted_list_item": {
+          "rich_text": [
+            { "text": { "content": "Integrated OpenAI, GitHub, and local artifacts." } }
+          ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "heading_2",
+        "heading_2": {
+          "rich_text": [ { "text": { "content": "Action Items" } } ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "to_do",
+        "to_do": {
+          "checked": false,
+          "rich_text": [
+            { "text": { "content": "Polish Next.js portfolio landing page." } }
+          ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "to_do",
+        "to_do": {
+          "checked": false,
+          "rich_text": [
+            { "text": { "content": "Refine investor-facing automation summary." } }
+          ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "heading_2",
+        "heading_2": {
+          "rich_text": [ { "text": { "content": "Raw Text" } } ]
+        }
+      },
+      {
+        "object": "block",
+        "type": "paragraph",
+        "paragraph": {
+          "rich_text": [
+            { "text": { "content": "Summary:\n- ...\n\nActions:\n- ..." } }
+          ]
+        }
+      }
+    ],
+    "preview": {
+      "title": "Daily Automation Summary · 2025-11-25 · dotlink-ops/nextjs",
+      "text": "Highlights (2) · Action Items (2)"
+    }
+  }
+}
