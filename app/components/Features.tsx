@@ -53,7 +53,7 @@ export function Features() {
                 className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 transition hover:text-indigo-500 dark:text-indigo-300"
               >
                 Learn more
-                <span aria-hidden className="text-base">
+                <span aria-hidden="true" className="text-base">
                   →
                 </span>
               </a>
