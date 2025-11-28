@@ -7,6 +7,9 @@ export default function HomePage() {
         {/* HERO */}
         <header className="space-y-4">
           <h1 className="text-4xl font-semibold">Automation, Systems & AI for Lean Teams</h1>
+          <p className="text-lg text-zinc-300 max-w-3xl">
+            Automation-first workflows: a daily Python runner, AI-generated summaries, and a live Next.js frontend at ariadnenexus.com.
+          </p>
           <p className="text-zinc-400 max-w-2xl">
             I design and ship one-command automations, AI-powered workflows, and
             clean developer environments that turn scattered tools into a repeatable,
@@ -117,6 +120,49 @@ export default function HomePage() {
             {/* Import client component directly; Next handles client boundary */}
             <DemoPreview />
           </div>
+        </section>
+
+        {/* UNDER THE HOOD */}
+        <section className="bg-zinc-900 border border-zinc-800 p-8 rounded-xl">
+          <h2 className="text-2xl font-semibold mb-4">Under the hood: how this actually works</h2>
+          <p className="text-zinc-300 mb-6">
+            This isn&apos;t just a landing page; it&apos;s wired to a real automation engine.
+          </p>
+          <ul className="space-y-4 text-zinc-300">
+            <li className="flex gap-3">
+              <span className="text-blue-400 font-bold">•</span>
+              <span>
+                A <strong>daily Python runner</strong> (<code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded">daily_v2.py</code>) ingests raw notes and project updates from local files.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-blue-400 font-bold">•</span>
+              <span>
+                The runner uses the <strong>OpenAI API</strong> to turn unstructured text into <strong>structured daily summaries</strong>: key events, decisions, risks, and next actions.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-blue-400 font-bold">•</span>
+              <span>
+                From those action items, the system can <strong>open or update GitHub issues</strong> with consistent titles, labels, and descriptions.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-blue-400 font-bold">•</span>
+              <span>
+                All of this runs inside a <strong>managed virtual environment</strong>, with clear entrypoints, logging, and a <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded">--demo</code> / <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded">--dry-run</code> mode for safe testing.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-blue-400 font-bold">•</span>
+              <span>
+                The frontend you&apos;re looking at — a <strong>Next.js App Router app</strong> deployed on Vercel at <code className="text-xs bg-zinc-800 px-1.5 py-0.5 rounded">ariadnenexus.com</code> — is the presentation layer that can surface these summaries and workflows for clients, teammates, or investors.
+              </span>
+            </li>
+          </ul>
+          <p className="mt-6 text-zinc-400 italic">
+            The goal is simple: tighten the loop between <strong>&quot;what happened today&quot;</strong>, <strong>&quot;what needs to be tracked&quot;</strong>, and <strong>&quot;how this looks to stakeholders&quot;</strong> — using real code, not slides.
+          </p>
         </section>
       </div>
     </main>
