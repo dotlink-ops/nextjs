@@ -17,8 +17,14 @@ export default function HomePage() {
           </p>
           <div className="flex flex-wrap gap-3 pt-2">
             <a
-              href="/automation"
+              href="/services"
               className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+            >
+              Services & Pricing
+            </a>
+            <a
+              href="/automation"
+              className="px-4 py-2 bg-zinc-50 text-black rounded-lg font-medium hover:bg-zinc-200 transition"
             >
               View Automation Details
             </a>
@@ -26,7 +32,7 @@ export default function HomePage() {
               href="/api/daily-summary"
               target="_blank"
               rel="noreferrer"
-              className="px-4 py-2 bg-zinc-50 text-black rounded-lg font-medium hover:bg-zinc-200 transition"
+              className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
             >
               View API Demo
             </a>
