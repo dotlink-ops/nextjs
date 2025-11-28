@@ -171,6 +171,40 @@ export default function HomePage() {
             The goal is simple: tighten the loop between <strong>&quot;what happened today&quot;</strong>, <strong>&quot;what needs to be tracked&quot;</strong>, and <strong>&quot;how this looks to stakeholders&quot;</strong> — using real code, not slides.
           </p>
         </section>
+
+        {/* RESOURCES */}
+        <section className="space-y-6">
+          <h2 className="text-2xl font-semibold text-zinc-100">Resources</h2>
+          
+          <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
+            <h3 className="text-xl font-semibold text-zinc-100">Free Automation Brand Template (Figma)</h3>
+            <p className="text-zinc-300">
+              A reusable brand + layout system for automation, AI, and systems-focused studios.
+            </p>
+            <p className="text-zinc-300">Use it to:</p>
+            <ul className="space-y-2 text-zinc-300 ml-4">
+              <li>• Set up a clean visual identity for your automation practice</li>
+              <li>• Reuse layouts for case studies, services, and pricing pages</li>
+              <li>• Keep decks, docs, and landing pages visually consistent</li>
+            </ul>
+            <div className="flex flex-wrap gap-3 pt-2">
+              <a
+                href="https://www.figma.com/community/file/placeholder"
+                target="_blank"
+                rel="noreferrer"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+              >
+                View the template on Figma
+              </a>
+              <a
+                href="/services"
+                className="px-4 py-2 bg-transparent border border-zinc-700 rounded-lg text-zinc-200 hover:bg-zinc-800 transition"
+              >
+                Work with me to customize it
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
   );
