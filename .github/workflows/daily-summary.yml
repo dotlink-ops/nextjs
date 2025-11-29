@@ -6,16 +6,24 @@ on:
     - cron: "0 13 * * *"
   workflow_dispatch:  # Allow manual triggering
 
+# Least-privilege permissions (only what's needed)
+permissions:
+  contents: write  # Required for git push
+
 jobs:
   run-daily-and-sync:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for git push
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pin to commit SHA for security: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       
       - name: Set up Python
-        uses: actions/setup-python@v5
+        # Pin to commit SHA for security: actions/setup-python@v5.3.0
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
         with:
           python-version: "3.11"
           cache: 'pip'
@@ -95,3 +103,28 @@ jobs:
           
           git push origin main
           echo "✓ Changes pushed to main - Vercel will auto-deploy"
+      
+      - name: Notify Slack on failure
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK" ]; then
+            curl -X POST "$SLACK_WEBHOOK" \
+              -H 'Content-Type: application/json' \
+              -d "{
+                \"text\": \":warning: Daily Summary Automation Failed\",
+                \"blocks\": [
+                  {
+                    \"type\": \"section\",
+                    \"text\": {
+                      \"type\": \"mrkdwn\",
+                      \"text\": \"*Daily Summary Automation Failed*\\n\\nRepository: \\`dotlink-ops/Avidelta\\`\\nWorkflow: <https://github.com/dotlink-ops/Avidelta/actions/runs/${{ github.run_id }}|View Run>\"
+                    }
+                  }
+                ]
+              }"
+            echo "✓ Slack notification sent"
+          else
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+          fi

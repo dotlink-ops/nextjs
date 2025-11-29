@@ -1,0 +1,27 @@
+# CODEOWNERS file for dotlink-ops/Avidelta
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything in the repo
+* @dotlink-ops
+
+# Workflow files require security review
+.github/workflows/** @dotlink-ops
+.github/workflows/*.yml @dotlink-ops
+
+# Actions configuration requires review
+.github/actions/** @dotlink-ops
+
+# Security-sensitive configuration files
+.env.example @dotlink-ops
+*.config.js @dotlink-ops
+*.config.ts @dotlink-ops
+
+# Documentation about secrets and security
+docs/SECRETS_MANAGEMENT.md @dotlink-ops
+
+# Python automation scripts (access to secrets)
+scripts/*.py @dotlink-ops
+scripts/requirements.txt @dotlink-ops
+
+# API routes (may handle sensitive data)
+app/api/** @dotlink-ops
