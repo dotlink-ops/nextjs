@@ -145,7 +145,7 @@ def render_dashboard(qdata: Dict[str, Dict[str, int]]) -> str:
     agg = round(sum(vals) / len(vals)) if vals else 0
     trend = "↗ Steady Improvement"  # placeholder (could compute slope later)
 
-    now_utc = dt.datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    now_utc = dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
     lines = []
     lines.append("## 📊 Executive Dashboard (Auto-Generated Summary)\n")
