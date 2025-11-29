@@ -55,3 +55,23 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "Run \`pre-commit run --all-files\` locally to see details" >> $GITHUB_STEP_SUMMARY
           fi
+
+      - name: Notify Slack (failure)
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "❌ *${GITHUB_WORKFLOW}* failed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`).\nSee details: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Failure notification sent to Slack"

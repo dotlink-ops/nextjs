@@ -104,8 +104,8 @@ jobs:
           git push origin main
           echo "✓ Changes pushed to main - Vercel will auto-deploy"
 
-      - name: Notify Slack
-        if: always()
+      - name: Notify Slack (success)
+        if: success()
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
         run: |
@@ -113,26 +113,33 @@ jobs:
             echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
             exit 0
           fi
+          payload=$(cat <<EOF
+          {
+            "text": "✅ *${GITHUB_WORKFLOW}* succeeded in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`)."
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Success notification sent to Slack"
 
-          if [ "${{ job.status }}" = "success" ]; then
-            curl -X POST -H 'Content-type: application/json' \
-              --data "{\"text\": \"✅ GitHub Action completed: $GITHUB_WORKFLOW on $GITHUB_REF (@ $GITHUB_SHA)\"}" \
-              "$SLACK_WEBHOOK"
-            echo "✓ Success notification sent to Slack"
-          else
-            curl -X POST "$SLACK_WEBHOOK" \
-              -H 'Content-Type: application/json' \
-              -d "{
-                \"text\": \":warning: Daily Summary Automation Failed\",
-                \"blocks\": [
-                  {
-                    \"type\": \"section\",
-                    \"text\": {
-                      \"type\": \"mrkdwn\",
-                      \"text\": \"*Daily Summary Automation Failed*\\n\\nRepository: \\`dotlink-ops/Avidelta\\`\\nWorkflow: <https://github.com/dotlink-ops/Avidelta/actions/runs/${{ github.run_id }}|View Run>\"
-                    }
-                  }
-                ]
-              }"
-            echo "✓ Failure notification sent to Slack"
+      - name: Notify Slack (failure)
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
           fi
+          payload=$(cat <<EOF
+          {
+            "text": "❌ *${GITHUB_WORKFLOW}* failed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`).\nSee details: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Failure notification sent to Slack"
