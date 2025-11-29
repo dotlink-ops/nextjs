@@ -30,7 +30,22 @@ interface DailySummary {
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), "output", "daily_summary.json");
+    // Try public/data first (for GitHub Actions deployed version)
+    // Fall back to output/ for local development
+    const publicPath = path.join(process.cwd(), "public", "data", "daily_summary.json");
+    const outputPath = path.join(process.cwd(), "output", "daily_summary.json");
+    
+    let filePath = publicPath;
+    let dataSource = "production";
+    
+    // Check if public/data version exists
+    try {
+      await fs.access(publicPath);
+    } catch {
+      // Fall back to output/ for local development
+      filePath = outputPath;
+      dataSource = "local";
+    }
     
     // Check if file exists
     try {
@@ -39,7 +54,7 @@ export async function GET() {
       return NextResponse.json(
         { 
           error: "Daily summary not found",
-          message: "Run the automation script to generate data: ./run-daily.sh",
+          message: "Run the automation script to generate data: python3 scripts/daily_v2.py",
           status: "not_found"
         },
         { status: 404 }
@@ -68,6 +83,7 @@ export async function GET() {
       _metadata: {
         fetched_at: new Date().toISOString(),
         api_version: "1.0",
+        data_source: dataSource,
       }
     };
     
