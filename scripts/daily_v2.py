@@ -39,8 +39,19 @@ logger = logging.getLogger(__name__)
 # Third-party imports (with fallback for demo mode)
 try:
     from dotenv import load_dotenv
-    from openai import OpenAI
-    from github import Github, GithubException
+    from openai import (
+        APIConnectionError,
+        APITimeoutError,
+        APIStatusError,
+        OpenAI,
+        RateLimitError,
+    )
+    from github import (
+        BadCredentialsException,
+        Github,
+        GithubException,
+        RateLimitExceededException,
+    )
     HAS_DEPS = True
 except ImportError:
     HAS_DEPS = False
@@ -107,16 +118,30 @@ class DailyAutomation:
         # Initialize API clients
         try:
             self.openai_client = OpenAI(api_key=openai_api_key)
+        except Exception as e:
+            logger.error("❌ Failed to initialize OpenAI client.")
+            logger.error("   Verify OPENAI_API_KEY is valid and network access is available.")
+            raise RuntimeError("OpenAI client initialization failed") from e
+
+        try:
             self.github_client = Github(github_token)
             self.repo = self.github_client.get_repo(repo_name)
             logger.info(f"✓ API clients initialized successfully (repo: {repo_name})")
+        except BadCredentialsException as e:
+            logger.error("❌ GitHub authentication failed: invalid GITHUB_TOKEN.")
+            logger.error("   Generate a token with 'repo' scope and update .env.local.")
+            raise RuntimeError("GitHub authentication failed") from e
+        except RateLimitExceededException as e:
+            logger.error("❌ GitHub rate limit exceeded while initializing repository access.")
+            logger.error("   Retry after the rate limit window resets or use a token with higher limits.")
+            raise RuntimeError("GitHub rate limit exceeded") from e
         except GithubException as e:
             logger.error(f"❌ Failed to access repository {repo_name}: {e}")
             logger.error("   Check that GITHUB_TOKEN has 'repo' scope and REPO_NAME is correct")
-            raise
+            raise RuntimeError("GitHub repository access failed") from e
         except Exception as e:
-            logger.error(f"❌ Failed to initialize API clients: {e}")
-            raise
+            logger.error(f"❌ Failed to initialize GitHub client: {e}")
+            raise RuntimeError("GitHub client initialization failed") from e
 
     def ingest_notes(self) -> List[str]:
         """Ingest notes from configured source"""
@@ -185,7 +210,7 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 max_tokens=500,
                 timeout=30.0,
             )
-            
+
             # Parse response
             content = response.choices[0].message.content
             try:
@@ -197,14 +222,31 @@ Format as JSON with keys: highlights, action_items, assessment"""
                     "action_items": ["Review generated summary"],
                     "assessment": "AI generated summary (non-JSON response)"
                 }
-            
+
             logger.info(f"✓ Generated summary using {response.model}")
             return summary_data
-            
+
+        except RateLimitError as e:
+            logger.error("❌ OpenAI rate limit reached while generating summary.")
+            logger.error("   Wait before retrying or reduce request volume.")
+            logger.debug(f"OpenAI rate limit details: {e}")
+        except APITimeoutError as e:
+            logger.error("❌ OpenAI request timed out while generating summary.")
+            logger.error("   Check network connectivity or try again with fewer notes.")
+            logger.debug(f"OpenAI timeout details: {e}")
+        except APIConnectionError as e:
+            logger.error("❌ Unable to reach OpenAI (network or DNS issue).")
+            logger.error("   Verify internet access and any proxy/firewall settings.")
+            logger.debug(f"OpenAI connection details: {e}")
+        except APIStatusError as e:
+            logger.error(f"❌ OpenAI returned an error response (status {getattr(e, 'status_code', 'unknown')}).")
+            logger.error("   Review API key permissions or retry later if this is a service issue.")
+            logger.debug(f"OpenAI status error details: {e}")
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
-            logger.info("  Falling back to demo summary")
-            return self._generate_demo_summary(notes)
+
+        logger.info("  Falling back to demo summary")
+        return self._generate_demo_summary(notes)
 
     def _generate_demo_summary(self, notes: List[str]) -> Dict[str, Any]:
         """Generate a demo summary without API calls"""
@@ -249,26 +291,43 @@ Format as JSON with keys: highlights, action_items, assessment"""
                 # Skip empty items
                 if not item or not item.strip():
                     continue
-                    
+
                 # Create issue
                 issue = self.repo.create_issue(
                     title=item[:100].strip(),  # Limit title length and trim whitespace
                     body=f"Auto-generated from daily automation runner\n\n**Action Item:**\n{item}\n\n---\n*Created: {datetime.now(timezone.utc).isoformat()}*",
                     labels=["automation", "daily-runner"],
                 )
-                
+
                 created_issues.append({
                     "number": issue.number,
                     "title": issue.title,
                     "url": issue.html_url,
                     "labels": [label.name for label in issue.labels],
                 })
-                
+
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
-                
+
+        except BadCredentialsException as e:
+            logger.error("❌ Unable to create GitHub issues: invalid GITHUB_TOKEN.")
+            logger.error("   Update your token with 'repo' scope and rerun the script.")
+            logger.debug(f"GitHub auth details: {e}")
+        except RateLimitExceededException as e:
+            logger.error("❌ GitHub rate limit exceeded while creating issues.")
+            logger.error("   Wait for the limit to reset or use a token with higher limits.")
+            logger.debug(f"GitHub rate limit details: {e}")
+        except GithubException as e:
+            status_info = getattr(e, 'status', 'unknown')
+            logger.error(f"❌ GitHub API error (status {status_info}) while creating issues: {e}")
+            logger.error("   Confirm repository permissions and that REPO_NAME is correct.")
+            logger.debug(f"GitHub exception details: {e.data if hasattr(e, 'data') else e}")
         except Exception as e:
             logger.error(f"GitHub API error: {e}")
-            logger.info("  Continuing with partial results...")
+        finally:
+            if created_issues:
+                logger.info("  Continuing with partial results...")
+            else:
+                logger.info("  No GitHub issues were created due to errors above.")
         
         logger.info(f"✓ Created {len(created_issues)} GitHub issues")
         return created_issues
