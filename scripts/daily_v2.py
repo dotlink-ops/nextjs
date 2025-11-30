@@ -26,7 +26,7 @@ import json
 import logging
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 # Configure logging first (before any other code)
 logging.basicConfig(
@@ -122,89 +122,104 @@ class DailyAutomation:
         """Ingest notes from configured source"""
         logger.info("📥 Ingesting notes...")
         notes = []
-        
-        # Check for markdown/text files in notes directory
+
         if self.notes_source.exists():
-            # Glob doesn't support {md,txt} syntax - need to search separately
-            for pattern in ["**/*.md", "**/*.txt"]:
-                for file_path in self.notes_source.glob(pattern):
-                    try:
-                        content = file_path.read_text(encoding="utf-8")
-                        if content.strip():
-                            notes.append(content.strip())
-                            logger.debug(f"  Loaded: {file_path.name}")
-                    except Exception as e:
-                        logger.warning(f"  Failed to read {file_path}: {e}")
-        
-        # Fallback to demo notes if no files found
+            notes.extend(self._read_notes_from_disk())
+
         if not notes:
-            logger.info("  No notes found, using demo data")
-            notes = [
-                "Implement automated data pull for sales pipeline",
-                "Fix daily report export script failing on edge cases",
-                "Draft investor-ready bulleted summary for next meeting",
-            ]
-        
+            notes = self._demo_notes()
+
         logger.info(f"✓ Ingested {len(notes)} notes")
         return notes
+
+    def _read_notes_from_disk(self) -> List[str]:
+        """Read markdown and text notes from the notes directory."""
+        notes = []
+        for pattern in ["**/*.md", "**/*.txt"]:
+            for file_path in self.notes_source.glob(pattern):
+                try:
+                    content = file_path.read_text(encoding="utf-8")
+                    if content.strip():
+                        notes.append(content.strip())
+                        logger.debug(f"  Loaded: {file_path.name}")
+                except Exception as e:
+                    logger.warning(f"  Failed to read {file_path}: {e}")
+        return notes
+
+    def _demo_notes(self) -> List[str]:
+        """Return fallback demo notes when no files are available."""
+        logger.info("  No notes found, using demo data")
+        return [
+            "Implement automated data pull for sales pipeline",
+            "Fix daily report export script failing on edge cases",
+            "Draft investor-ready bulleted summary for next meeting",
+        ]
 
     def generate_summary(self, notes: List[str]) -> Dict[str, Any]:
         """Generate AI-powered summary from notes"""
         logger.info("🤖 Generating summary...")
-        
+
         if not notes:
             logger.warning("No notes provided, returning empty summary")
             return {"highlights": [], "action_items": [], "assessment": "No notes to process"}
-        
+
         if self.demo_mode or not self.openai_client:
             logger.info("  Running in demo mode (stubbed)")
             return self._generate_demo_summary(notes)
-        
+
         try:
-            # Prepare prompt
-            notes_text = "\n".join(f"{i+1}. {note}" for i, note in enumerate(notes))
-            prompt = f"""Analyze these daily notes and provide a structured summary:
-
-{notes_text}
-
-Extract:
-1. Key highlights (2-4 bullet points)
-2. Action items with priorities
-3. Brief overall assessment
-
-Format as JSON with keys: highlights, action_items, assessment"""
-
-            # Call OpenAI
-            response = self.openai_client.chat.completions.create(
-                model="gpt-4-turbo-preview",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant that summarizes daily work notes."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.7,
-                max_tokens=500,
-                timeout=30.0,
-            )
-            
-            # Parse response
-            content = response.choices[0].message.content
-            try:
-                summary_data = json.loads(content)
-            except json.JSONDecodeError:
-                # Fallback if response isn't valid JSON
-                summary_data = {
-                    "highlights": [content[:200]],
-                    "action_items": ["Review generated summary"],
-                    "assessment": "AI generated summary (non-JSON response)"
-                }
-            
-            logger.info(f"✓ Generated summary using {response.model}")
-            return summary_data
-            
+            notes_text = self._format_notes_for_prompt(notes)
+            prompt = self._build_summary_prompt(notes_text)
+            response = self._request_summary(prompt)
+            return self._parse_summary_response(response)
         except Exception as e:
             logger.error(f"OpenAI API error: {e}")
             logger.info("  Falling back to demo summary")
             return self._generate_demo_summary(notes)
+
+    def _format_notes_for_prompt(self, notes: List[str]) -> str:
+        """Format notes into a numbered list suitable for prompts."""
+        return "\n".join(f"{i+1}. {note}" for i, note in enumerate(notes))
+
+    def _build_summary_prompt(self, notes_text: str) -> str:
+        """Construct the prompt used for OpenAI summary generation."""
+        return (
+            "Analyze these daily notes and provide a structured summary:\n\n"
+            f"{notes_text}\n\n"
+            "Extract:\n"
+            "1. Key highlights (2-4 bullet points)\n"
+            "2. Action items with priorities\n"
+            "3. Brief overall assessment\n\n"
+            "Format as JSON with keys: highlights, action_items, assessment"
+        )
+
+    def _request_summary(self, prompt: str) -> Any:
+        """Call the OpenAI API to generate a summary."""
+        return self.openai_client.chat.completions.create(
+            model="gpt-4-turbo-preview",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant that summarizes daily work notes."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=500,
+            timeout=30.0,
+        )
+
+    def _parse_summary_response(self, response: Any) -> Dict[str, Any]:
+        """Parse the OpenAI response into structured summary data."""
+        content = response.choices[0].message.content
+        try:
+            summary_data = json.loads(content)
+        except json.JSONDecodeError:
+            summary_data = {
+                "highlights": [content[:200]],
+                "action_items": ["Review generated summary"],
+                "assessment": "AI generated summary (non-JSON response)"
+            }
+
+        logger.info(f"✓ Generated summary using {response.model}")
+        return summary_data
 
     def _generate_demo_summary(self, notes: List[str]) -> Dict[str, Any]:
         """Generate a demo summary without API calls"""
@@ -232,39 +247,11 @@ Format as JSON with keys: highlights, action_items, assessment"""
             return created_issues
         
         if self.demo_mode or not self.repo:
-            logger.info("  Running in demo mode (stubbed)")
-            for i, item in enumerate(action_items, 42):
-                created_issues.append({
-                    "number": i,
-                    "title": item,
-                    "url": f"https://github.com/example/repo/issues/{i}",
-                    "labels": ["automation", "daily-runner"],
-                    "demo": True,
-                })
-            logger.info(f"✓ Would create {len(created_issues)} issues (demo)")
-            return created_issues
+            return self._demo_issues(action_items)
         
         try:
             for item in action_items:
-                # Skip empty items
-                if not item or not item.strip():
-                    continue
-                    
-                # Create issue
-                issue = self.repo.create_issue(
-                    title=item[:100].strip(),  # Limit title length and trim whitespace
-                    body=f"Auto-generated from daily automation runner\n\n**Action Item:**\n{item}\n\n---\n*Created: {datetime.now(timezone.utc).isoformat()}*",
-                    labels=["automation", "daily-runner"],
-                )
-                
-                created_issues.append({
-                    "number": issue.number,
-                    "title": issue.title,
-                    "url": issue.html_url,
-                    "labels": [label.name for label in issue.labels],
-                })
-                
-                logger.info(f"  Created issue #{issue.number}: {issue.title}")
+                self._create_issue_from_item(created_issues, item)
                 
         except Exception as e:
             logger.error(f"GitHub API error: {e}")
@@ -272,6 +259,44 @@ Format as JSON with keys: highlights, action_items, assessment"""
         
         logger.info(f"✓ Created {len(created_issues)} GitHub issues")
         return created_issues
+
+    def _demo_issues(self, action_items: List[str]) -> List[Dict[str, Any]]:
+        """Return stubbed GitHub issues in demo mode."""
+        created_issues = []
+        logger.info("  Running in demo mode (stubbed)")
+        for i, item in enumerate(action_items, 42):
+            created_issues.append({
+                "number": i,
+                "title": item,
+                "url": f"https://github.com/example/repo/issues/{i}",
+                "labels": ["automation", "daily-runner"],
+                "demo": True,
+            })
+        logger.info(f"✓ Would create {len(created_issues)} issues (demo)")
+        return created_issues
+
+    def _create_issue_from_item(self, created_issues: List[Dict[str, Any]], item: str) -> None:
+        """Create a GitHub issue for a single action item."""
+        if not item or not item.strip():
+            return
+
+        issue = self.repo.create_issue(
+            title=item[:100].strip(),
+            body=(
+                "Auto-generated from daily automation runner\n\n"
+                f"**Action Item:**\n{item}\n\n---\n*Created: {datetime.now(timezone.utc).isoformat()}*"
+            ),
+            labels=["automation", "daily-runner"],
+        )
+
+        created_issues.append({
+            "number": issue.number,
+            "title": issue.title,
+            "url": issue.html_url,
+            "labels": [label.name for label in issue.labels],
+        })
+
+        logger.info(f"  Created issue #{issue.number}: {issue.title}")
 
     def save_output(self, notes: List[str], summary: Dict[str, Any], issues: List[Dict[str, Any]]) -> Path:
         """Save structured output for Next.js frontend"""
@@ -325,71 +350,87 @@ Format as JSON with keys: highlights, action_items, assessment"""
         start_time = datetime.now(timezone.utc)
         
         try:
-            logger.info("=" * 60)
-            logger.info("=== Daily automation run starting ===")
-            logger.info("=" * 60)
-            
-            # Step 1: Ingest notes
+            self._log_run_header()
             notes = self.ingest_notes()
             if not notes:
                 logger.warning("No notes found, exiting")
                 return 0
-            
-            logger.info(f"Ingested {len(notes)} notes")
-            
-            # Step 2: Generate summary
-            if self.demo_mode:
-                logger.info("Using demo summary generation (no OpenAI calls)")
-                summary = self._generate_demo_summary(notes)
-            else:
-                summary = self.generate_summary(notes)
-            
-            # Step 3: Create GitHub issues
-            action_items = summary.get("action_items", [])
-            if self.demo_mode:
-                logger.info(f"Skipping GitHub issue creation (demo_mode={self.demo_mode})")
-                issues = []
-            elif action_items:
-                logger.info("Creating GitHub issues from action items")
-                issues = self.create_github_issues(action_items)
-            else:
-                logger.info("No action items to create issues from")
-                issues = []
-            
-            # Step 4: Save output
+
+            summary = self._build_summary(notes)
+            issues = self._handle_issues(summary)
             output_file = self.save_output(notes, summary, issues)
-            
-            # Summary
-            duration = (datetime.now(timezone.utc) - start_time).total_seconds()
-            logger.info("=" * 60)
-            logger.info("✅ AUTOMATION COMPLETE")
-            logger.info(f"   Duration: {duration:.2f}s")
-            logger.info(f"   Notes: {len(notes)}")
-            logger.info(f"   Issues: {len(issues)}")
-            logger.info(f"   Output: {output_file}")
-            logger.info("=" * 60)
-            
-            if self.demo_mode:
-                logger.info("")
-                logger.info("💡 To enable live API calls:")
-                logger.info("   1. Install dependencies: pip install -r scripts/requirements.txt")
-                logger.info("   2. Configure .env.local with API keys")
-                logger.info("   3. Run again: python3 scripts/daily_v2.py")
-                logger.info("")
-            
-            # Final success banner
-            logger.info("=" * 60)
-            logger.info("=== Daily automation run finished successfully ===")
-            logger.info("=" * 60)
-            
+            self._log_run_footer(start_time, notes, issues, output_file)
+            self._log_demo_instructions()
+            self._log_final_banner()
             return 0
-            
+
         except Exception as e:
             logger.error("=" * 60)
             logger.error(f"❌ Automation failed: {e}")
             logger.error("=" * 60)
             logger.exception("Daily automation run failed")
             return 1
+
+    def _build_summary(self, notes: List[str]) -> Dict[str, Any]:
+        """Generate a summary using demo data or OpenAI."""
+        if self.demo_mode:
+            logger.info("Using demo summary generation (no OpenAI calls)")
+            return self._generate_demo_summary(notes)
+        return self.generate_summary(notes)
+
+    def _handle_issues(self, summary: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Create GitHub issues when appropriate."""
+        action_items = summary.get("action_items", [])
+        if self.demo_mode:
+            logger.info(f"Skipping GitHub issue creation (demo_mode={self.demo_mode})")
+            return []
+        if action_items:
+            logger.info("Creating GitHub issues from action items")
+            return self.create_github_issues(action_items)
+
+        logger.info("No action items to create issues from")
+        return []
+
+    def _log_run_header(self) -> None:
+        """Log the start banner for a run."""
+        logger.info("=" * 60)
+        logger.info("=== Daily automation run starting ===")
+        logger.info("=" * 60)
+
+    def _log_run_footer(
+        self,
+        start_time: datetime,
+        notes: List[str],
+        issues: List[Dict[str, Any]],
+        output_file: Path,
+    ) -> None:
+        """Log summary details after the run completes."""
+        duration = (datetime.now(timezone.utc) - start_time).total_seconds()
+        logger.info("=" * 60)
+        logger.info("✅ AUTOMATION COMPLETE")
+        logger.info(f"   Duration: {duration:.2f}s")
+        logger.info(f"   Notes: {len(notes)}")
+        logger.info(f"   Issues: {len(issues)}")
+        logger.info(f"   Output: {output_file}")
+        logger.info("=" * 60)
+
+    def _log_demo_instructions(self) -> None:
+        """Log helpful instructions when running in demo mode."""
+        if not self.demo_mode:
+            return
+
+        logger.info("")
+        logger.info("💡 To enable live API calls:")
+        logger.info("   1. Install dependencies: pip install -r scripts/requirements.txt")
+        logger.info("   2. Configure .env.local with API keys")
+        logger.info("   3. Run again: python3 scripts/daily_v2.py")
+        logger.info("")
+
+    def _log_final_banner(self) -> None:
+        """Log final banner to signal completion."""
+        logger.info("=" * 60)
+        logger.info("=== Daily automation run finished successfully ===")
+        logger.info("=" * 60)
 
 
 def main(argv: Optional[List[str]] = None) -> int:
