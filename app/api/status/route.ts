@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
 import appPkg from "../../../package.json" assert { type: "json" };
 import nextPkg from "next/package.json" assert { type: "json" };
+import type { PackageJson, StatusResponse } from "../types";
 
-interface PackageJson {
-  name: string;
-  version: string;
-}
-
-export async function GET() {
+export async function GET(): Promise<NextResponse<StatusResponse>> {
   const uptimeSeconds = Math.floor(process.uptime());
   const startedAt = new Date(Date.now() - uptimeSeconds * 1000).toISOString();
   const now = new Date().toISOString();
 
-  const payload = {
+  const payload: StatusResponse = {
     ok: true,
     ready: true,
     name: (appPkg as PackageJson).name,
