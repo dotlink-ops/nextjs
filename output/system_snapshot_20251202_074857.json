@@ -1,0 +1,143 @@
+{
+  "snapshot_date": "2025-12-02",
+  "snapshot_time": "2025-12-02T07:48:57.824993+00:00",
+  "system_health": {
+    "scripts": {
+      "all_present": true,
+      "scripts": [
+        {
+          "name": "daily_v2.py",
+          "path": "/workspaces/Avidelta/scripts/daily_v2.py",
+          "exists": true,
+          "executable": true,
+          "syntax_valid": true
+        },
+        {
+          "name": "inbox_zero.py",
+          "path": "/workspaces/Avidelta/scripts/inbox_zero.py",
+          "exists": true,
+          "executable": false,
+          "syntax_valid": true
+        },
+        {
+          "name": "update_security_dashboard.py",
+          "path": "/workspaces/Avidelta/scripts/update_security_dashboard.py",
+          "exists": true,
+          "executable": false,
+          "syntax_valid": true
+        }
+      ],
+      "missing": [],
+      "errors": []
+    },
+    "configs": {
+      "all_present": false,
+      "configs": [
+        {
+          "name": ".env.local",
+          "path": "/workspaces/Avidelta/.env.local",
+          "exists": false,
+          "size": 0
+        },
+        {
+          "name": "package.json",
+          "path": "/workspaces/Avidelta/package.json",
+          "exists": true,
+          "size": 528
+        },
+        {
+          "name": "next.config.ts",
+          "path": "/workspaces/Avidelta/next.config.ts",
+          "exists": true,
+          "size": 581
+        },
+        {
+          "name": "tsconfig.json",
+          "path": "/workspaces/Avidelta/tsconfig.json",
+          "exists": true,
+          "size": 666
+        },
+        {
+          "name": "scripts/requirements.txt",
+          "path": "/workspaces/Avidelta/scripts/requirements.txt",
+          "exists": true,
+          "size": 113
+        },
+        {
+          "name": ".vscode/settings.json",
+          "path": "/workspaces/Avidelta/.vscode/settings.json",
+          "exists": true,
+          "size": 766
+        }
+      ],
+      "missing": [
+        ".env.local"
+      ]
+    },
+    "python": {
+      "python_version": "3.12.3",
+      "venv_active": true,
+      "dependencies": {
+        "openai": "installed",
+        "github": "installed",
+        "dotenv": "installed",
+        "requests": "installed"
+      }
+    },
+    "automations": {
+      "notion": {
+        "status": "not_configured",
+        "note": "Manual check required"
+      },
+      "github": {
+        "status": "ready",
+        "note": "GITHUB_TOKEN in env"
+      },
+      "slack": {
+        "status": "not_configured",
+        "note": "SLACK_TOKEN not set"
+      },
+      "recent_runs": [
+        {
+          "file": "audit_20251202_070726.json",
+          "date": "2025-12-02",
+          "status": "success"
+        },
+        {
+          "file": "audit_20251128_213302.json",
+          "date": "2025-11-28",
+          "status": "success"
+        },
+        {
+          "file": "audit_20251128_191500.json",
+          "date": "2025-11-28",
+          "status": "success"
+        },
+        {
+          "file": "audit_20251128_001737.json",
+          "date": "2025-11-28",
+          "status": "success"
+        },
+        {
+          "file": "audit_20251127_235438.json",
+          "date": "2025-11-27",
+          "status": "success"
+        }
+      ],
+      "last_success": "2025-12-02"
+    }
+  },
+  "backups": [
+    "/workspaces/Avidelta/output/backups/package_20251202_074857.json",
+    "/workspaces/Avidelta/output/backups/next.config_20251202_074857.ts",
+    "/workspaces/Avidelta/output/backups/tsconfig_20251202_074857.json",
+    "/workspaces/Avidelta/output/backups/scripts_requirements_20251202_074857.txt",
+    "/workspaces/Avidelta/output/backups/.vscode_settings_20251202_074857.json"
+  ],
+  "summary": {
+    "all_scripts_ok": true,
+    "all_configs_ok": false,
+    "python_env_ok": true,
+    "total_backups": 5
+  }
+}

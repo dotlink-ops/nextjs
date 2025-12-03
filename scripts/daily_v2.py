@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pyright: strict
 """
 Daily Automation Runner v2 (Production)
 ========================================

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pyright: strict
 """
 Update the Q1–Q4 Compliance Dashboard in docs/security-audit-template.md.
 
