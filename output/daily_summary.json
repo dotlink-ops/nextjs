@@ -1,6 +1,6 @@
 {
-  "date": "2025-12-03",
-  "created_at": "2025-12-03T13:36:03.148127+00:00",
+  "date": "2025-12-04",
+  "created_at": "2025-12-04T13:35:58.124319+00:00",
   "repo": "dotlink-ops/Avidelta",
   "summary_bullets": [
     "Processed 2 notes from daily workflow",
@@ -13,36 +13,8 @@
     "Draft investor-ready bulleted summary for next meeting"
   ],
   "assessment": "Key outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.",
-  "issues_created": 3,
-  "issues": [
-    {
-      "number": 65,
-      "title": "Implement automated data pull for sales pipeline",
-      "url": "https://github.com/dotlink-ops/Avidelta/issues/65",
-      "labels": [
-        "automation",
-        "daily-runner"
-      ]
-    },
-    {
-      "number": 66,
-      "title": "Fix daily report export script failing on edge cases",
-      "url": "https://github.com/dotlink-ops/Avidelta/issues/66",
-      "labels": [
-        "automation",
-        "daily-runner"
-      ]
-    },
-    {
-      "number": 67,
-      "title": "Draft investor-ready bulleted summary for next meeting",
-      "url": "https://github.com/dotlink-ops/Avidelta/issues/67",
-      "labels": [
-        "automation",
-        "daily-runner"
-      ]
-    }
-  ],
+  "issues_created": 0,
+  "issues": [],
   "raw_text": "Summary:\nKey outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.\n\nActions:\n- Implement automated data pull for sales pipeline\n- Fix daily report export script failing on edge cases\n- Draft investor-ready bulleted summary for next meeting",
   "metadata": {
     "runner_version": "2.0.0",
