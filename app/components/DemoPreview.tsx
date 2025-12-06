@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { DemoResponse } from "@/app/api/types";
 
 type DemoData = {
   summary: string;
@@ -18,8 +19,13 @@ export default function DemoPreview() {
     try {
       const res = await fetch("/api/demo");
       if (!res.ok) throw new Error(`Status ${res.status}`);
-      const json = await res.json();
-      setData({ summary: json.summary || "", log: json.log || "" });
+      const json: DemoResponse = await res.json();
+      if (json.status !== "ok") {
+        setError(json.message ?? json.error ?? "Failed to fetch demo outputs");
+        setData(null);
+        return;
+      }
+      setData({ summary: json.summary, log: json.log });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to fetch demo outputs";
       setError(message);

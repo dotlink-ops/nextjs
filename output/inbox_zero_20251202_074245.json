@@ -1,0 +1,88 @@
+{
+  "date": "2025-12-02",
+  "created_at": "2025-12-02T07:42:45.137803+00:00",
+  "slack": {
+    "outreach_followups": [
+      {
+        "id": "1",
+        "text": "Follow up on partnership proposal",
+        "label": "Next Morning",
+        "channel": "outreach"
+      },
+      {
+        "id": "3",
+        "text": "Investor intro - schedule call",
+        "label": "Next Morning",
+        "channel": "business-dev"
+      }
+    ],
+    "internal_archive": [
+      {
+        "id": "2",
+        "text": "Team sync notes from standup",
+        "action": "archive_for_docs",
+        "channel": "team"
+      }
+    ],
+    "unprocessed": []
+  },
+  "email": {
+    "outreach_followups": [
+      {
+        "id": "e1",
+        "subject": "Partnership opportunity discussion",
+        "label": "Next Morning",
+        "from": "partner@example.com"
+      },
+      {
+        "id": "e3",
+        "subject": "Investor pitch deck feedback",
+        "label": "Next Morning",
+        "from": "investor@fund.com"
+      }
+    ],
+    "internal_archive": [
+      {
+        "id": "e2",
+        "subject": "Weekly team updates",
+        "action": "archive_and_tag",
+        "from": "team@company.com"
+      }
+    ],
+    "unprocessed": []
+  },
+  "followups_next_morning": [
+    {
+      "source": "slack",
+      "channel": "outreach",
+      "text": "Follow up on partnership proposal",
+      "priority": "normal"
+    },
+    {
+      "source": "slack",
+      "channel": "business-dev",
+      "text": "Investor intro - schedule call",
+      "priority": "normal"
+    },
+    {
+      "source": "email",
+      "from": "partner@example.com",
+      "subject": "Partnership opportunity discussion",
+      "priority": "normal"
+    },
+    {
+      "source": "email",
+      "from": "investor@fund.com",
+      "subject": "Investor pitch deck feedback",
+      "priority": "normal"
+    }
+  ],
+  "summary": {
+    "total_processed": 6,
+    "followups_count": 4,
+    "archived_count": 2
+  },
+  "metadata": {
+    "demo_mode": true
+  }
+}

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-4">
@@ -5,9 +7,9 @@ export default function NotFound() {
       <p className="text-muted-foreground">
         This thread of the maze doesn&apos;t exist. Let&apos;s get you back home.
       </p>
-      <a href="/" className="underline">
+      <Link href="/" className="underline">
         Go to homepage
-      </a>
+      </Link>
     </main>
   );
 }

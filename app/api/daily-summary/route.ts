@@ -2,10 +2,12 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import type { DailySummaryResponse, DailySummaryData } from "../types";
 
 export const dynamic = "force-dynamic"; // Always fetch fresh data
 export const revalidate = 60; // Cache for 60 seconds
 
+codex/refactor-code-for-clarity-and-structure
 interface DailySummary {
   date: string;
   created_at: string;
@@ -41,6 +43,9 @@ async function selectSummaryFile() {
   const publicPath = buildFilePath(path.join("public", "data"));
   const outputPath = buildFilePath("output");
 
+=======
+export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
+          main
   try {
     await fs.access(publicPath);
     return { filePath: publicPath, dataSource: "production" as const };
@@ -49,6 +54,7 @@ async function selectSummaryFile() {
   }
 }
 
+codex/refactor-code-for-clarity-and-structure
 async function readDailySummary(filePath: string) {
   try {
     await fs.access(filePath);
@@ -76,7 +82,42 @@ export async function GET() {
     const data = await readDailySummary(filePath);
 
     const response = {
+
+    // Check if file exists
+    try {
+      await fs.access(filePath);
+    } catch {
+      return NextResponse.json<DailySummaryResponse>(
+        {
+          status: "not_found",
+          error: "Daily summary not found",
+          message: "Run the automation script to generate data: python3 scripts/daily_v2.py",
+        },
+        { status: 404 }
+      );
+    }
+
+    // Read and parse file
+    const fileContent = await fs.readFile(filePath, "utf8");
+    const data: DailySummaryData = JSON.parse(fileContent);
+
+    // Validate data structure
+    if (!data.date || !data.summary_bullets || !data.action_items) {
+      return NextResponse.json<DailySummaryResponse>(
+        {
+          status: "invalid_data",
+          error: "Invalid data format",
+          message: "Daily summary file is corrupted or incomplete",
+        },
+        { status: 500 }
+      );
+    }
+
+    // Add response metadata
+    const response: DailySummaryResponse = 
+          main
       ...data,
+      status: "ok",
       _metadata: {
         fetched_at: new Date().toISOString(),
         api_version: "1.0",
@@ -84,7 +125,7 @@ export async function GET() {
       }
     };
 
-    return NextResponse.json(response, {
+    return NextResponse.json<DailySummaryResponse>(response, {
       headers: {
         "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
         "X-Content-Type-Options": "nosniff",
@@ -114,11 +155,15 @@ export async function GET() {
     }
 
     console.error("Error reading daily_summary.json:", err);
-    return NextResponse.json(
+    return NextResponse.json<DailySummaryResponse>(
       {
+        status: "error",
         error: "Failed to load daily summary",
         message: err instanceof Error ? err.message : "Unknown error",
+codex/refactor-code-for-clarity-and-structure
         status: "error",
+=======
+           main
       },
       { status: 500 }
     );
