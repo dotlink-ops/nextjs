@@ -1,3 +1,172 @@
+copilot/add-security-hardening-checklist
+name: Daily Run
+
+on:
+  schedule:
+    # Runs daily at 2:00 PM UTC (6:00 AM PT / 9:00 AM ET)
+    # Staggered from daily-summary.yml (13:00 UTC) for monitoring
+    - cron: "0 14 * * *"
+  workflow_dispatch:  # Allow manual triggering
+
+# Default to no permissions - job specifies what it needs
+permissions: {}
+
+jobs:
+  daily-run:
+    name: Daily Automation Run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required for git push
+
+    steps:
+      - name: Checkout repository
+        # Pin to commit SHA for security: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Set up Python
+        # Pin to commit SHA for security: actions/setup-python@v5.3.0
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Validate secrets (sanity check)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Validating required secrets..."
+
+          if [ -z "${OPENAI_API_KEY}" ]; then
+            echo "✗ OPENAI_API_KEY missing"
+            echo "Add it at: https://github.com/dotlink-ops/Avidelta/settings/secrets/actions"
+            exit 1
+          else
+            echo "✓ OPENAI_API_KEY present (value masked)"
+          fi
+
+          if [ -z "${GITHUB_TOKEN}" ]; then
+            echo "✗ GITHUB_TOKEN missing"
+            exit 1
+          else
+            echo "✓ GITHUB_TOKEN present (auto-provided)"
+          fi
+
+          echo "✓ All required secrets validated"
+
+      - name: Run daily automation (via run-daily.sh)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: dotlink-ops/Avidelta
+        run: |
+          # Make script executable and run
+          chmod +x run-daily.sh
+          ./run-daily.sh
+
+      - name: Verify output was created
+        run: |
+          if [ ! -f output/daily_summary.json ]; then
+            echo "Error: daily_summary.json not created"
+            exit 1
+          fi
+          echo "✓ daily_summary.json created successfully"
+          head -20 output/daily_summary.json
+
+      - name: Copy to public data directory
+        run: |
+          mkdir -p public/data
+          cp output/daily_summary.json public/data/daily_summary.json
+          echo "✓ Copied to public/data/"
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "automation-bot"
+          git config user.email "automation-bot@users.noreply.github.com"
+          git add public/data/daily_summary.json output/daily_summary.json
+
+          # Check if there are changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit - daily summary is unchanged"
+            exit 0
+          fi
+
+          # Commit with timestamp
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          git commit -m "chore: daily run output - $TIMESTAMP [skip ci]"
+
+          git push origin main
+          echo "✓ Changes pushed to main - Vercel will auto-deploy"
+
+      - name: Generate job summary
+        if: always()
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          echo "## 🚀 Daily Run Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp:** $(date -u '+%Y-%m-%d %H:%M UTC')" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$JOB_STATUS" = "success" ]; then
+            echo "✅ Daily run completed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Outputs:**" >> $GITHUB_STEP_SUMMARY
+            echo "- \`output/daily_summary.json\` - Generated summary" >> $GITHUB_STEP_SUMMARY
+            echo "- \`public/data/daily_summary.json\` - API endpoint data" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Daily run failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Check the workflow logs for details." >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify Slack (success)
+        if: success()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "✅ *${GITHUB_WORKFLOW}* succeeded in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`).\nDaily automation completed successfully."
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Success notification sent to Slack"
+
+      - name: Notify Slack (failure)
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "❌ *${GITHUB_WORKFLOW}* failed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`).\nSee details: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Failure notification sent to Slack"
+=======
 name: Daily Automation Runner
 
 on:
@@ -103,4 +272,5 @@ jobs:
               title: '🚨 Daily Automation Failed',
               body: `Daily automation run failed on ${new Date().toISOString().split('T')[0]}\n\n**Workflow Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
               labels: ['automation', 'bug', 'high-priority']
-            })
+             }
+             main

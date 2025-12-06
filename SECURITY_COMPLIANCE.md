@@ -148,7 +148,7 @@ If a secret is compromised:
 - ✅ Multi-environment matrix (repository, staging, production)
 - ✅ Pinned actions to commit SHAs
 - ✅ Least-privilege permissions: `{}`
-- ✅ Slack notifications on failure
+- ✅ Slack notifications on success and failure
 - ✅ Enhanced job summaries with rotation dates
 - ✅ Cron jitter (12:07 UTC) to avoid thundering herd
 
@@ -168,10 +168,31 @@ If a secret is compromised:
 - ✅ Pinned actions to commit SHAs
 - ✅ Explicit permissions: `{ contents: write }`
 - ✅ Pre-flight secret validation
-- ✅ Slack notifications on failure
+- ✅ Slack notifications on success and failure
 - ✅ Fail-fast error handling
 
 **Schedule:** Daily at 13:00 UTC (5:00 AM PT / 8:00 AM ET)
+
+**Required Secrets:**
+- `OPENAI_API_KEY`
+- `GITHUB_TOKEN` (auto-provided)
+- `SLACK_WEBHOOK` (optional)
+
+---
+
+### daily-run.yml
+
+**Purpose:** Daily automation run using run-daily.sh wrapper script
+
+**Security Features:**
+- ✅ Pinned actions to commit SHAs
+- ✅ Explicit permissions: `{ contents: write }`
+- ✅ Pre-flight secret validation
+- ✅ Slack notifications on success and failure
+- ✅ Job summary with detailed output information
+- ✅ Uses existing scripts layout (run-daily.sh → daily_v2.py)
+
+**Schedule:** Daily at 14:00 UTC (6:00 AM PT / 9:00 AM ET)
 
 **Required Secrets:**
 - `OPENAI_API_KEY`
@@ -188,7 +209,7 @@ If a secret is compromised:
 - ✅ Pinned actions to commit SHAs
 - ✅ Explicit permissions: `{ contents: read }`
 - ✅ Secret availability checks
-- ✅ Slack notifications on failure
+- ✅ Slack notifications on success and failure
 - ✅ Demo mode testing (no API calls)
 
 **Trigger:** Every push to repository, manual dispatch
