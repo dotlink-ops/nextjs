@@ -60,7 +60,7 @@ Ariadne Nexus is a full-stack automation system that transforms daily notes into
 ## Directory Structure
 
 ```
-Avidelta/
+AriadneNexus/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes
 │   ├── components/        # React components
