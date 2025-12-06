@@ -1,86 +1,121 @@
-// app/api/daily-summary/route.ts
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
-import type { DailySummaryResponse, DailySummaryData } from "../types";
 
-export const dynamic = "force-dynamic"; // Always fetch fresh data
-export const revalidate = 60; // Cache for 60 seconds
+interface DailySummary {
+  date: string;
+  summary_bullets: string[];
+  action_items: string[];
+  // add other optional fields if present in your data
+  [key: string]: unknown;
+}
 
-export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
+const DAILY_SUMMARY_FILENAME = "daily_summary.json";
+
+class DailySummaryNotFoundError extends Error {}
+class InvalidDailySummaryError extends Error {}
+
+function buildFilePath(...segments: string[]) {
+  return path.join(process.cwd(), ...segments, DAILY_SUMMARY_FILENAME);
+}
+
+async function selectSummaryFile() {
+  const publicPath = buildFilePath("public", "data");
+  const outputPath = buildFilePath("output");
+
   try {
-    // Try public/data first (for GitHub Actions deployed version)
-    // Fall back to output/ for local development
-    const publicPath = path.join(process.cwd(), "public", "data", "daily_summary.json");
-    const outputPath = path.join(process.cwd(), "output", "daily_summary.json");
+    await fs.access(publicPath);
+    return { filePath: publicPath, dataSource: "production" as const };
+  } catch {
+    return { filePath: outputPath, dataSource: "local" as const };
+  }
+}
 
-    let filePath = publicPath;
-    let dataSource = "production";
+async function readDailySummary(filePath: string) {
+  try {
+    await fs.access(filePath);
+  } catch {
+    throw new DailySummaryNotFoundError("Daily summary file is missing");
+  }
 
-    // Check if public/data version exists
-    try {
-      await fs.access(publicPath);
-    } catch {
-      // Fall back to output/ for local development
-      filePath = outputPath;
-      dataSource = "local";
-    }
+  const fileContent = await fs.readFile(filePath, "utf8");
 
-    // Check if file exists
-    try {
-      await fs.access(filePath);
-    } catch {
-      return NextResponse.json<DailySummaryResponse>(
+  let data: unknown;
+  try {
+    data = JSON.parse(fileContent);
+  } catch (err) {
+    throw new InvalidDailySummaryError(
+      "Daily summary JSON is invalid: " + (err instanceof Error ? err.message : String(err))
+    );
+  }
+
+  const record = data as Record<string, unknown>;
+  if (
+    typeof data !== "object" ||
+    data === null ||
+    typeof record.date !== "string" ||
+    !Array.isArray(record.summary_bullets) ||
+    !Array.isArray(record.action_items)
+  ) {
+    throw new InvalidDailySummaryError(
+      "Daily summary file is corrupted or missing required fields (date: string, summary_bullets: array, action_items: array)."
+    );
+  }
+
+  return data as DailySummary;
+}
+
+export async function GET() {
+  try {
+    const { filePath, dataSource } = await selectSummaryFile();
+    const data = await readDailySummary(filePath);
+
+    const response = {
+      ...data,
+      _metadata: {
+        source: dataSource,
+        file_path: filePath,
+        generated_at: new Date().toISOString(),
+      },
+    };
+
+    return NextResponse.json(response, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+        "Cache-Control": "max-age=0, s-maxage=60, stale-while-revalidate=3600",
+        "X-Content-Type-Options": "nosniff",
+      },
+    });
+  } catch (err) {
+    if (err instanceof DailySummaryNotFoundError) {
+      return NextResponse.json(
         {
-          status: "not_found",
           error: "Daily summary not found",
           message: "Run the automation script to generate data: python3 scripts/daily_v2.py",
+          status: "not_found",
         },
         { status: 404 }
       );
     }
 
-    // Read and parse file
-    const fileContent = await fs.readFile(filePath, "utf8");
-    const data: DailySummaryData = JSON.parse(fileContent);
-
-    // Validate data structure
-    if (!data.date || !data.summary_bullets || !data.action_items) {
-      return NextResponse.json<DailySummaryResponse>(
+    if (err instanceof InvalidDailySummaryError) {
+      return NextResponse.json(
         {
-          status: "invalid_data",
           error: "Invalid data format",
-          message: "Daily summary file is corrupted or incomplete",
+          message: err instanceof Error ? err.message : String(err),
+          status: "invalid_data",
         },
         { status: 500 }
       );
     }
 
-    // Add response metadata
-    const response: DailySummaryResponse = {
-      ...data,
-      status: "ok",
-      _metadata: {
-        fetched_at: new Date().toISOString(),
-        api_version: "1.0",
-        data_source: dataSource,
-      }
-    };
-
-    return NextResponse.json<DailySummaryResponse>(response, {
-      headers: {
-        "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
-        "X-Content-Type-Options": "nosniff",
-      }
-    });
-
-  } catch (err) {
     console.error("Error reading daily_summary.json:", err);
-    return NextResponse.json<DailySummaryResponse>(
+    return NextResponse.json(
       {
-        status: "error",
         error: "Failed to load daily summary",
         message: err instanceof Error ? err.message : "Unknown error",
+        status: "error",
       },
       { status: 500 }
     );
