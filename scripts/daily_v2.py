@@ -76,7 +76,9 @@ try:
         Github,
         GithubException,
         RateLimitExceededException,
+        UnknownObjectException,
     )
+    from github.GithubException import RateLimitExceededException as RateLimitException
     HAS_DEPS = True
 except ImportError:
     HAS_DEPS = False
@@ -422,7 +424,12 @@ class DailyAutomation:
 
         for item in action_items:
             try:
-                issue = self._create_issue_from_item(item)
+                # Skip empty or whitespace-only items
+                if not item or not str(item).strip():
+                    logger.warning(f"  Skipping empty action item")
+                    continue
+                    
+                issue = self._create_issue_from_item(str(item))
                 created_issues.append({
                     "number": issue.number,
                     "title": issue.title,
@@ -430,6 +437,8 @@ class DailyAutomation:
                     "labels": [label.name for label in issue.labels],
                 })
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
+            except ValueError as e:
+                logger.warning(f"  Skipping invalid action item: {e}")
             except RateLimitException as e:
                 logger.error(f"❌ GitHub rate limit reached while creating issue for: {item[:50]}...")
                 logger.error(f"   Rate limit resets at: {e.data.get('reset', 'unknown')}")
@@ -471,7 +480,11 @@ class DailyAutomation:
         if not item_text or not item_text.strip():
             raise ValueError("Cannot create issue from empty action item")
 
+        # Ensure title is not empty after stripping
         title = item_text[:100].strip()
+        if not title:
+            raise ValueError("Action item results in empty title after processing")
+            
         body = (
             f"Auto-generated from daily automation runner\n\n"
             f"**Action Item:**\n{item_text}\n\n"
@@ -498,17 +511,33 @@ class DailyAutomation:
         logger.info("💾 Saving output...")
 
         timestamp = datetime.now(timezone.utc)
+        
+        # Handle potential None values in summary with defensive programming
+        highlights = summary.get("highlights") or []
+        action_items = summary.get("action_items") or []
+        assessment = summary.get("assessment") or ""
+        
+        # Ensure lists contain only non-empty strings to avoid formatting errors
+        highlights = [str(h).strip() for h in highlights if h is not None and str(h).strip()]
+        action_items = [str(item).strip() for item in action_items if item is not None and str(item).strip()]
+        
+        # Build raw_text with proper handling of empty action items
+        raw_text_parts = [f"Summary:\n{assessment}"]
+        if action_items:
+            raw_text_parts.append("\nActions:\n" + "\n".join(f"- {item}" for item in action_items))
+        else:
+            raw_text_parts.append("\nActions:\n(No action items)")
+        
         output_data = {
             "date": timestamp.strftime("%Y-%m-%d"),
             "created_at": timestamp.isoformat(),
-            "repo": self.config.repo_name,
-            "summary_bullets": summary.get("highlights", []),
-            "action_items": summary.get("action_items", []),
-            "assessment": summary.get("assessment", ""),
+            "repo": self.config.repo_name or "unknown/repo",
+            "summary_bullets": highlights,
+            "action_items": action_items,
+            "assessment": assessment,
             "issues_created": len(issues),
             "issues": issues,
-            "raw_text": f"Summary:\n{summary.get('assessment', '')}\n\nActions:\n" +
-                       "\n".join(f"- {item}" for item in summary.get("action_items", [])),
+            "raw_text": "".join(raw_text_parts),
             "metadata": {
                 "runner_version": "2.0.0",
                 "demo_mode": self.demo_mode,
