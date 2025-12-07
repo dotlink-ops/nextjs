@@ -1,0 +1,71 @@
+{
+  "date": "2025-12-07",
+  "created_at": "2025-12-07T02:59:30.209477+00:00",
+  "source": "csv",
+  "leads": [
+    {
+      "id": "LEAD-001",
+      "company": "Test Corp",
+      "contact_name": "John Doe",
+      "email": "john@test.example",
+      "phone": "+1-555-0100",
+      "stage": "lead",
+      "value": 0.0,
+      "probability": 50.0,
+      "expected_close_date": "2025-12-31",
+      "notes": "Test lead",
+      "created_at": "2025-12-01T00:00:00Z",
+      "updated_at": "2025-12-07T00:00:00Z"
+    },
+    {
+      "id": "LEAD-002",
+      "company": "Test Corp 2",
+      "contact_name": "Jane Smith",
+      "email": "jane@test.example",
+      "phone": "",
+      "stage": "qualified",
+      "value": 0.0,
+      "probability": 0.0,
+      "expected_close_date": "2025-12-31",
+      "notes": "Another test",
+      "created_at": "2025-12-01T00:00:00Z",
+      "updated_at": "2025-12-07T00:00:00Z"
+    },
+    {
+      "id": "LEAD-003",
+      "company": "Valid Corp",
+      "contact_name": "Bob Johnson",
+      "email": "bob@valid.example",
+      "phone": "+1-555-0102",
+      "stage": "proposal",
+      "value": 100000.0,
+      "probability": 75.0,
+      "expected_close_date": "2025-12-31",
+      "notes": "Valid lead",
+      "created_at": "2025-12-01T00:00:00Z",
+      "updated_at": "2025-12-07T00:00:00Z"
+    }
+  ],
+  "metrics": {
+    "total_leads": 3,
+    "total_value": 100000.0,
+    "weighted_value": 75000.0,
+    "leads_by_stage": {
+      "lead": 1,
+      "qualified": 1,
+      "proposal": 1
+    },
+    "value_by_stage": {
+      "lead": 0.0,
+      "qualified": 0.0,
+      "proposal": 100000.0
+    },
+    "avg_deal_size": 33333.333333333336,
+    "conversion_rate": 0.0
+  },
+  "metadata": {
+    "runner_version": "1.0.0",
+    "demo_mode": false,
+    "total_leads": 3
+  }
+}

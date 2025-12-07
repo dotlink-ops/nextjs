@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-12-07T02:57:10.686283+00:00",
+  "runner_version": "1.0.0",
+  "data_source": "csv",
+  "demo_mode": false,
+  "leads_pulled": 7,
+  "total_value": 653000.0,
+  "weighted_value": 500850.0,
+  "status": "success"
+}
