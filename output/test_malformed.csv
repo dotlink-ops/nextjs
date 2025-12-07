@@ -1,0 +1,4 @@
+id,company,contact_name,email,phone,stage,value,probability,expected_close_date,notes,created_at,updated_at
+LEAD-001,Test Corp,John Doe,john@test.example,+1-555-0100,lead,invalid_value,50,2025-12-31,Test lead,2025-12-01T00:00:00Z,2025-12-07T00:00:00Z
+LEAD-002,Test Corp 2,Jane Smith,jane@test.example,,qualified,,invalid_prob,2025-12-31,Another test,2025-12-01T00:00:00Z,2025-12-07T00:00:00Z
+LEAD-003,Valid Corp,Bob Johnson,bob@valid.example,+1-555-0102,proposal,100000,75,2025-12-31,Valid lead,2025-12-01T00:00:00Z,2025-12-07T00:00:00Z

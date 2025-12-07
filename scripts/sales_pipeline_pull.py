@@ -28,6 +28,7 @@ import sys
 import json
 import logging
 import argparse
+import csv
 from dataclasses import dataclass, asdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -65,7 +66,7 @@ def configure_logging() -> logging.Logger:
 logger = configure_logging()
 
 # Standard library imports
-import csv
+# (csv already imported at top)
 
 # Third-party imports (with fallback for demo mode)
 try:
@@ -193,6 +194,13 @@ class SalesPipelinePuller:
             with open(csv_path, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
                 for row in reader:
+                    # Helper function to safely convert to float
+                    def safe_float(value: Any, default: float = 0.0) -> float:
+                        try:
+                            return float(value) if value and str(value).strip() else default
+                        except (ValueError, TypeError):
+                            return default
+                    
                     lead = SalesLead(
                         id=row.get('id', ''),
                         company=row.get('company', ''),
@@ -200,8 +208,8 @@ class SalesPipelinePuller:
                         email=row.get('email', ''),
                         phone=row.get('phone'),
                         stage=row.get('stage', 'lead'),
-                        value=float(row.get('value', 0)),
-                        probability=float(row.get('probability', 0)),
+                        value=safe_float(row.get('value'), 0.0),
+                        probability=safe_float(row.get('probability'), 0.0),
                         expected_close_date=row.get('expected_close_date', ''),
                         notes=row.get('notes', ''),
                         created_at=row.get('created_at', ''),
@@ -231,6 +239,13 @@ class SalesPipelinePuller:
             with open(json_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             
+            # Helper function to safely convert to float
+            def safe_float(value: Any, default: float = 0.0) -> float:
+                try:
+                    return float(value) if value is not None else default
+                except (ValueError, TypeError):
+                    return default
+            
             leads: List[SalesLead] = []
             for item in data.get('leads', []):
                 lead = SalesLead(
@@ -240,8 +255,8 @@ class SalesPipelinePuller:
                     email=item.get('email', ''),
                     phone=item.get('phone'),
                     stage=item.get('stage', 'lead'),
-                    value=float(item.get('value', 0)),
-                    probability=float(item.get('probability', 0)),
+                    value=safe_float(item.get('value'), 0.0),
+                    probability=safe_float(item.get('probability'), 0.0),
                     expected_close_date=item.get('expected_close_date', ''),
                     notes=item.get('notes', ''),
                     created_at=item.get('created_at', ''),
