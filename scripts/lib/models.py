@@ -49,7 +49,8 @@ class DailySummary:
         Returns:
             DailySummary instance
         """
-        timestamp = datetime.now(datetime.now().astimezone().tzinfo)
+        from datetime import timezone
+        timestamp = datetime.now(timezone.utc)
         
         return cls(
             date=timestamp.strftime("%Y-%m-%d"),

@@ -76,6 +76,7 @@ try:
         Github,
         GithubException,
         RateLimitExceededException,
+        UnknownObjectException,
     )
     HAS_DEPS = True
 except ImportError:
@@ -430,7 +431,10 @@ class DailyAutomation:
                     "labels": [label.name for label in issue.labels],
                 })
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
-            except RateLimitException as e:
+            except ValueError as e:
+                logger.warning(f"Skipping invalid action item: {e}")
+                continue
+            except RateLimitExceededException as e:
                 logger.error(f"❌ GitHub rate limit reached while creating issue for: {item[:50]}...")
                 logger.error(f"   Rate limit resets at: {e.data.get('reset', 'unknown')}")
                 logger.error("   Wait before retrying or reduce request volume.")
