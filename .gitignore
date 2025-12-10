@@ -42,6 +42,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# automation output
+output/audit_*.json
+
 # IDE
 .idea/
 .vscode/
