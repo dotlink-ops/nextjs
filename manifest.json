@@ -1,0 +1,11 @@
+{
+  "name": "Ariadne Nexus — Architecture Generator",
+  "id": "ariane-nexus-architecture-generator",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "description": "Generates the 4-Layer Ariadne Nexus Automation Architecture (Frontend, API, Engine, Integrations).",
+  "parameters": [],
+  "permissions": []
+}

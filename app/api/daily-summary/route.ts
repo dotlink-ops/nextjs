@@ -15,7 +15,7 @@ export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
     const outputPath = path.join(process.cwd(), "output", "daily_summary.json");
 
     let filePath = publicPath;
-    let dataSource = "production";
+    let dataSource: 'production' | 'local' = 'production';
 
     // Check if public/data version exists
     try {
@@ -23,7 +23,7 @@ export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
     } catch {
       // Fall back to output/ for local development
       filePath = outputPath;
-      dataSource = "local";
+      dataSource = 'local';
     }
 
     // Check if file exists

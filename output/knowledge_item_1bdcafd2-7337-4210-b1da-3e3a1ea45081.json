@@ -1,0 +1,28 @@
+{
+  "item_id": "1bdcafd2-7337-4210-b1da-3e3a1ea45081",
+  "client_id": "00000000-0000-0000-0000-000000000000",
+  "source": "test",
+  "text": "Testing automation pipeline with CRM sync and GitHub integration",
+  "metadata": {
+    "tags": [
+      "test",
+      "automation"
+    ],
+    "priority": "low"
+  },
+  "processed_at": "2025-12-09T20:44:41.625962+00:00",
+  "word_count": 9,
+  "char_count": 64,
+  "status": "processed",
+  "entities": {
+    "keywords": [
+      "automation",
+      "crm",
+      "sync",
+      "integration",
+      "pipeline",
+      "github"
+    ],
+    "mentions": []
+  }
+}
