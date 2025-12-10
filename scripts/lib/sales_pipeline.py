@@ -8,6 +8,7 @@ Automated data collection for sales pipeline analytics.
 Integrates with CRM systems and sales tracking tools.
 """
 
+import json
 import logging
 import os
 from dataclasses import dataclass
@@ -16,6 +17,10 @@ from typing import List, Dict, Any, Optional
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
+
+# Constants
+DEFAULT_CACHE_DIR = "output/sales_cache"
+TIMESTAMP_FORMAT = "%Y%m%d_%H%M%S"
 
 
 @dataclass
@@ -41,7 +46,7 @@ class SalesPipelineConfig:
             SalesPipelineConfig instance
         """
         data_source = os.getenv("SALES_PIPELINE_SOURCE", "demo")
-        cache_dir = Path(os.getenv("SALES_PIPELINE_CACHE", str(project_root / "output" / "sales_cache")))
+        cache_dir = Path(os.getenv("SALES_PIPELINE_CACHE", str(project_root / DEFAULT_CACHE_DIR)))
         
         return cls(
             data_source=data_source if not demo_mode else "demo",
@@ -299,10 +304,9 @@ class SalesPipelineDataSource:
         if not self.config.cache_dir:
             raise RuntimeError("Cache directory not configured")
         
-        timestamp_str = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+        timestamp_str = datetime.now(timezone.utc).strftime(TIMESTAMP_FORMAT)
         cache_file = self.config.cache_dir / f"sales_pipeline_{timestamp_str}.json"
         
-        import json
         with open(cache_file, "w", encoding="utf-8") as f:
             json.dump(data.to_dict(), f, indent=2, ensure_ascii=False)
         
