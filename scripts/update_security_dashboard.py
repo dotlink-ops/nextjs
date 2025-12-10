@@ -209,7 +209,7 @@ def redact_secrets_health_column(dashboard_text: str) -> str:
         res.extend(lines[:header_idx + 2])
         for line in lines[header_idx + 2:]:
             # Redact only table data rows (must look like: '| ... | ... | ... | ... | ... |')
-            if not line.strip().startswith("|") or line.count("|") < 6:
+            if not line.strip().startswith("|") or line.count("|") < 7:
                 res.append(line)
                 continue
             parts = line.split("|")
