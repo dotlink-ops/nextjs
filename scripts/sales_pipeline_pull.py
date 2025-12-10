@@ -177,7 +177,7 @@ class SalesPipelineAutomation:
         try:
             with open(csv_path, 'r', encoding='utf-8') as f:
                 reader = csv.DictReader(f)
-                for row in reader:
+                for row_num, row in enumerate(reader, start=2):  # start=2 because row 1 is header
                     probability = int(row['probability'])
                     if not 0 <= probability <= 100:
                         raise ValueError(f"Probability must be 0-100, got {probability} in row: {row}")
@@ -196,8 +196,23 @@ class SalesPipelineAutomation:
             logger.info(f"✓ Loaded {len(deals)} deals from CSV")
             return deals
             
+        except KeyError as e:
+            logger.error(f"Missing required column in CSV: {e}")
+            logger.error(f"  CSV must contain columns: deal_id, company, contact, stage, value, probability, expected_close_date, last_activity")
+            logger.info("  Falling back to demo data")
+            return self._generate_demo_data()
+        except ValueError as e:
+            logger.error(f"Invalid data format in CSV: {e}")
+            logger.error(f"  Ensure 'value' is numeric and 'probability' is an integer between 0-100")
+            logger.info("  Falling back to demo data")
+            return self._generate_demo_data()
+        except UnicodeDecodeError as e:
+            logger.error(f"CSV file encoding error: {e}")
+            logger.error(f"  Ensure the CSV file is UTF-8 encoded")
+            logger.info("  Falling back to demo data")
+            return self._generate_demo_data()
         except Exception as e:
-            logger.error(f"Failed to read CSV file: {e}")
+            logger.error(f"Unexpected error reading CSV file: {e}")
             logger.info("  Falling back to demo data")
             return self._generate_demo_data()
     

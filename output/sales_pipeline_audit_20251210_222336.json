@@ -1,21 +1,21 @@
 {
   "date": "2025-12-10",
-  "created_at": "2025-12-10T22:24:01.724819+00:00",
+  "created_at": "2025-12-10T22:23:36.378639+00:00",
   "summary": {
-    "total_deals": 5,
-    "total_value": 485000.0,
-    "weighted_value": 370000.0,
-    "avg_deal_size": 97000.0,
+    "total_deals": 8,
+    "total_value": 685000.0,
+    "weighted_value": 485500.0,
+    "avg_deal_size": 85625.0,
     "deals_by_stage": {
-      "Proposal": 2,
-      "Negotiation": 1,
-      "Discovery": 1,
+      "Proposal": 3,
+      "Negotiation": 2,
+      "Discovery": 2,
       "Closed Won": 1
     },
     "value_by_stage": {
-      "Proposal": 85000.0,
-      "Negotiation": 125000.0,
-      "Discovery": 75000.0,
+      "Proposal": 145000.0,
+      "Negotiation": 220000.0,
+      "Discovery": 120000.0,
       "Closed Won": 200000.0
     }
   },
@@ -71,9 +71,42 @@
       "stage": "Closed Won",
       "value": 200000.0,
       "probability": 100,
-      "expected_close_date": "2025-12-10",
+      "expected_close_date": "2025-12-09",
       "last_activity": "2025-12-10",
       "weighted_value": 200000.0
+    },
+    {
+      "deal_id": "DEAL-006",
+      "company": "Innovate LLC",
+      "contact": "David Lee",
+      "stage": "Discovery",
+      "value": 45000.0,
+      "probability": 25,
+      "expected_close_date": "2025-03-15",
+      "last_activity": "2025-11-28",
+      "weighted_value": 11250.0
+    },
+    {
+      "deal_id": "DEAL-007",
+      "company": "Digital Ventures",
+      "contact": "Emma Wilson",
+      "stage": "Negotiation",
+      "value": 95000.0,
+      "probability": 75,
+      "expected_close_date": "2025-01-10",
+      "last_activity": "2025-12-09",
+      "weighted_value": 71250.0
+    },
+    {
+      "deal_id": "DEAL-008",
+      "company": "CloudTech Partners",
+      "contact": "Frank Miller",
+      "stage": "Proposal",
+      "value": 60000.0,
+      "probability": 55,
+      "expected_close_date": "2025-02-05",
+      "last_activity": "2025-12-07",
+      "weighted_value": 33000.0
     }
   ],
   "metadata": {
