@@ -76,7 +76,7 @@ async function readDailySummary(filePath: string) {
  * Handles the daily summary API endpoint by loading the latest summary data
  * and returning it with metadata that describes the response.
  */
-export async function GET() {
+export async function GET(): Promise<NextResponse<DailySummaryResponse>> {
   try {
     const { filePath, dataSource } = await selectSummaryFile();
     const data = await readDailySummary(filePath);
