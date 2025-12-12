@@ -191,6 +191,55 @@ def render_dashboard(qdata: Dict[str, Dict[str, int]]) -> str:
     return "\n".join(lines)
 
 
+def redact_secrets_health_column(dashboard_text: str) -> str:
+    """
+    Return a copy of the dashboard with the 'Secrets Health' column redacted (for DRY RUN preview).
+    """
+    lines = dashboard_text.splitlines()
+    res = []
+    # Find table header to determine column positions
+    header_idx = None
+    for i, line in enumerate(lines):
+        if "| Quarter" in line and "|" in line:
+            header_idx = i
+            break
+    if header_idx is not None:
+        # Header row is at header_idx and next line is delimiter (|---)
+        # Data rows start at header_idx+2, until we hit a non-table line.
+        res.extend(lines[:header_idx + 2])
+        for line in lines[header_idx + 2:]:
+            # Redact only table data rows (must look like: '| ... | ... | ... | ... | ... |')
+            if not line.strip().startswith("|") or line.count("|") < 7:
+                res.append(line)
+                continue
+            parts = line.split("|")
+            # parts: [ '', Q, completion, secrets, workflow, gov, grade, '' ]
+            if len(parts) < 8:
+                res.append(line)
+        last_processed_idx = header_idx + 2
+        for i, line in enumerate(lines[header_idx + 2:], start=header_idx + 2):
+            # Redact only table data rows (must look like: '| ... | ... | ... | ... | ... |')
+            if not line.strip().startswith("|") or line.count("|") < 6:
+                res.append(line)
+                last_processed_idx = i + 1
+                continue
+            parts = line.split("|")
+            # parts: [ '', Q, completion, secrets, workflow, gov, grade, '' ]
+            if len(parts) < 7:
+                res.append(line)
+                last_processed_idx = i + 1
+                continue
+            # Redact secrets health (index 3)
+            parts[3] = " [REDACTED] "
+            res.append("|".join(parts))
+            last_processed_idx = i + 1
+    else:
+        return dashboard_text  # can't find table, fallback
+    # Add any below-table lines
+    res.extend(lines[last_processed_idx:])
+    return "\n".join(res)
+
+
 def main(dry_run: bool = False) -> int:
     if not AUDIT_MD.exists():
         print(f"ERROR: {AUDIT_MD} not found.")
@@ -262,7 +311,7 @@ def main(dry_run: bool = False) -> int:
         print("\n" + "=" * 60)
         print("DRY RUN: Updated Dashboard Preview")
         print("=" * 60)
-        print(new_dashboard)
+        print(redact_secrets_health_column(new_dashboard))
         print("=" * 60)
         return 0
 
