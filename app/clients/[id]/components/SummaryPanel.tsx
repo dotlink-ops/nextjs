@@ -13,7 +13,9 @@ export default function SummaryPanel({ clientId }: { clientId: string }) {
   }
 
   useEffect(() => {
-    loadSummary();
+    (async () => {
+      await loadSummary();
+    })();
 
     const channel = supabaseClient
       .channel(`summary_updates_${clientId}`)
@@ -27,7 +29,7 @@ export default function SummaryPanel({ clientId }: { clientId: string }) {
         },
         () => {
           console.log("Realtime summary update");
-          loadSummary();
+          (async () => { await loadSummary(); })();
         }
       )
       .subscribe();
