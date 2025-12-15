@@ -35,16 +35,31 @@ jobs:
               per_page: 100,
             });
 
-            // Validate TARGET_REVIEWERS as existing GitHub users. If a name isn't a user,
-            // skip it and warn. If you intend to use a team, provide the team slug
-            // and we'll update the workflow to use `team_reviewers` instead.
+            // Validate TARGET_REVIEWERS as existing GitHub users or org teams.
+            // If a candidate matches a user, add to `validUsers`.
+            // If a candidate matches an org team slug, add to `validTeams`.
             const validUsers = [];
+            const validTeams = [];
             for (const candidate of TARGET_REVIEWERS) {
+              // Try as a user first
               try {
                 await github.rest.users.getByUsername({ username: candidate });
                 validUsers.push(candidate);
+                continue;
               } catch (err) {
-                core.warning(`Reviewer '${candidate}' not found as a GitHub user. Skipping. If this is a team, provide the team slug.`);
+                // not a user, try as a team slug under the repo owner org
+              }
+
+              try {
+                // Raw request to check org team existence: GET /orgs/{org}/teams/{team_slug}
+                await github.request('GET /orgs/{org}/teams/{team_slug}', {
+                  org: OWNER,
+                  team_slug: candidate,
+                });
+                validTeams.push(candidate);
+                core.info(`Reviewer '${candidate}' resolved as an org team slug.`);
+              } catch (err) {
+                core.warning(`Reviewer '${candidate}' not found as a GitHub user or org team slug. Skipping.`);
               }
             }
 
@@ -70,8 +85,8 @@ jobs:
                     core.info(`Removed requested reviewers from PR #${number}: ${currentReviewers.concat(currentTeams).join(', ')}`);
                   }
 
-                  if (!validUsers.length) {
-                    core.info(`No valid user reviewers to request for PR #${number}; skipping request.`);
+                  if (!validUsers.length && !validTeams.length) {
+                    core.info(`No valid reviewers (users or teams) to request for PR #${number}; skipping request.`);
                     continue;
                   }
 
@@ -80,10 +95,10 @@ jobs:
                     repo: REPO,
                     pull_number: number,
                     reviewers: validUsers,
-                    team_reviewers: [],
+                    team_reviewers: validTeams,
                   });
 
-                  core.info(`Requested review from: ${validUsers.join(', ')} on PR #${number}`);
+                  core.info(`Requested review from users: ${validUsers.join(', ')} and teams: ${validTeams.join(', ')} on PR #${number}`);
                   changed += 1;
                 } catch (err) {
                   core.warning(`Failed to update PR #${number}: ${err.message}`);
