@@ -1,3 +1,5 @@
+// Runtime: Node.js (default)
+// Justification: Uses process/env/IO
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { createServiceClient } from "@/utils/supabase";
