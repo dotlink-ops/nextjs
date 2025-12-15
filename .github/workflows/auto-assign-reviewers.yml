@@ -22,7 +22,7 @@ jobs:
             const OWNER = context.repo.owner;
             const REPO = context.repo.repo;
             const DAYS = 15;
-            const TARGET_REVIEWERS = ['dotlink-ops']; // requested reviewer(s)
+            const TARGET_REVIEWERS = ['ChatGPT Codex Connector']; // requested reviewer(s)
 
             const cutoff = new Date(Date.now() - DAYS * 24 * 60 * 60 * 1000);
 
