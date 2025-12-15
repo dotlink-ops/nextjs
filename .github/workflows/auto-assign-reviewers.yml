@@ -22,7 +22,7 @@ jobs:
             const OWNER = context.repo.owner;
             const REPO = context.repo.repo;
             const DAYS = 15;
-            const TARGET_REVIEWERS = ['ChatGPT Codex Connector']; // requested reviewer(s)
+            const TARGET_REVIEWERS = ['ChatGPT Codex Connector']; // requested reviewer(s) - usernames only
 
             const cutoff = new Date(Date.now() - DAYS * 24 * 60 * 60 * 1000);
 
@@ -34,6 +34,19 @@ jobs:
               state: 'open',
               per_page: 100,
             });
+
+            // Validate TARGET_REVIEWERS as existing GitHub users. If a name isn't a user,
+            // skip it and warn. If you intend to use a team, provide the team slug
+            // and we'll update the workflow to use `team_reviewers` instead.
+            const validUsers = [];
+            for (const candidate of TARGET_REVIEWERS) {
+              try {
+                await github.rest.users.getByUsername({ username: candidate });
+                validUsers.push(candidate);
+              } catch (err) {
+                core.warning(`Reviewer '${candidate}' not found as a GitHub user. Skipping. If this is a team, provide the team slug.`);
+              }
+            }
 
             let changed = 0;
             for (const pr of pulls) {
@@ -57,16 +70,20 @@ jobs:
                     core.info(`Removed requested reviewers from PR #${number}: ${currentReviewers.concat(currentTeams).join(', ')}`);
                   }
 
-                  // Request the target reviewer(s). If the target is a team slug, move it to team_reviewers array instead.
+                  if (!validUsers.length) {
+                    core.info(`No valid user reviewers to request for PR #${number}; skipping request.`);
+                    continue;
+                  }
+
                   await github.rest.pulls.requestReviewers({
                     owner: OWNER,
                     repo: REPO,
                     pull_number: number,
-                    reviewers: TARGET_REVIEWERS,
+                    reviewers: validUsers,
                     team_reviewers: [],
                   });
 
-                  core.info(`Requested review from: ${TARGET_REVIEWERS.join(', ')} on PR #${number}`);
+                  core.info(`Requested review from: ${validUsers.join(', ')} on PR #${number}`);
                   changed += 1;
                 } catch (err) {
                   core.warning(`Failed to update PR #${number}: ${err.message}`);
