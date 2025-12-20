@@ -1,10 +1,23 @@
 # Avidelta Automation + Portfolio Stack
 
-> **One-command daily runner that transforms work notes into structured summaries and GitHub issues using AI**
+![Daily run status](https://github.com/dotlink-ops/Avidelta/actions/workflows/daily-run.yml/badge.svg)
 
-This repo combines a **Python automation engine** with a **Next.js portfolio frontend** and is structured to be friendly for both humans and AI coding assistants.
+> **Automation-first platform that transforms daily work notes into actionable intelligence using AI**
 
 **Live Demo:** https://www.ariadnenexus.com
+
+---
+
+## 🏗️ What is Avidelta?
+
+**Avidelta** (branded as **Ariadne Nexus** for clients) is a **production automation platform** that demonstrates how to build AI-powered workflows for real-world business operations. It combines:
+
+- **Python automation engine** (`daily_v2.py`) - Ingests unstructured notes, generates structured summaries with OpenAI, creates GitHub issues from action items
+- **Next.js 16 dashboard** - Modern App Router frontend with live automation status, workflow history, and security metrics
+- **GitHub Actions CI/CD** - Automated daily runs, security scanning, pre-commit hooks, and health checks
+- **Production security** - Secret health monitoring, CSP reporting, security dashboards, automated compliance tracking
+
+This isn't just a portfolio piece—it's a **working operations system** I use daily to manage client projects, investor updates, and development workflows.
 
 ### Live Site
 
@@ -18,6 +31,13 @@ The frontend is deployed to Vercel at **ariadnenexus.com**, with automatic SSL, 
 ## 🎯 One-Line Pitch
 
 A full-stack automation system that ingests daily notes, generates AI summaries, creates GitHub issues automatically, and serves results through a modern Next.js dashboard—showcasing production-grade Python automation and frontend integration.
+
+---
+
+## 🎨 Design
+
+UI is sourced from our Figma file (design system + page layouts).  
+See `design/README.md` for the canonical Figma link and guidelines.
 
 ---
 
@@ -64,6 +84,94 @@ and extend the codebase.
 
 ---
 
+## 🚀 How to Run Locally
+
+### Prerequisites
+
+- **Python 3.12+** with `pip`
+- **Node.js 22+** with `npm`
+- **Git** for repository management
+- **Optional**: OpenAI API key (can run in `--demo` mode without it)
+
+### Quick Start
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/dotlink-ops/Avidelta.git
+cd Avidelta
+
+# 2. Set up Python automation
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r scripts/requirements.txt
+
+# 3. Configure environment (copy and edit with your keys)
+cp .env.local.example .env.local
+# Edit .env.local with your OPENAI_API_KEY, GITHUB_TOKEN, etc.
+
+# 4. Run automation (demo mode - no API keys needed)
+python3 scripts/daily_v2.py --demo
+
+# 5. View results
+cat output/daily_summary.json | jq
+
+# 6. Set up Next.js frontend
+npm install
+npm run dev
+# Open http://localhost:3000
+```
+
+### Running the Automation
+
+The automation can run in three modes:
+
+```bash
+# Demo mode (uses realistic test data, no API calls)
+python3 scripts/daily_v2.py --demo
+
+# Dry-run mode (simulates API calls, no changes made)
+python3 scripts/daily_v2.py --dry-run
+
+# Production mode (requires OPENAI_API_KEY and GITHUB_TOKEN)
+python3 scripts/daily_v2.py
+```
+
+See `SETUP.md` for detailed configuration and troubleshooting.
+
+---
+
+## 🧠 Daily Automation Runner (`daily_v2.py`)
+
+This repo includes a production-grade daily automation workflow, orchestrated via GitHub Actions.
+
+**Schedule:**  
+- Runs every day at **5:00 AM PT** via `.github/workflows/daily-run.yml`
+- Can also be triggered manually from the **Actions → daily-run** page
+
+**What it does:**
+
+1. Checks out the repo and sets up Python
+2. Installs dependencies (`requirements.txt`)
+3. Runs `daily_v2.py` to:
+   - Ingest notes / inputs
+   - Generate a structured daily summary
+   - Extract action items and decisions
+4. Creates or updates GitHub Issues for actionable tasks
+5. Commits generated artifacts back into the repo (e.g. summaries, logs)
+6. Uploads workflow artifacts for easy download and auditing
+
+**Configuration:**
+
+- Secrets (set in repo / environment settings):
+  - `OPENAI_API_KEY`
+  - `GITHUB_TOKEN` (with `repo` + `workflow` scopes)
+- Optional inputs:
+  - `demo_mode` (run in dry-run mode without hitting external APIs)
+
+This workflow is designed to be **auditable, repeatable, and portfolio-ready**, showing how automation can tie together GitHub, Python, and external APIs into a daily "ops brain."
+
+---
+
 ## 🚀 What This Does
 
 This project provides a complete automation workflow:
@@ -74,6 +182,7 @@ This project provides a complete automation workflow:
 4. **💾 JSON Output**: Saves structured data to `output/daily_summary.json`
 5. **🌐 Next.js Dashboard**: Serves results through modern API routes and React components
 6. **📊 Audit Logs**: Maintains timestamped audit trail in `output/audit_*.json`
+7. **⏰ GitHub Actions**: Automated daily runs at 5 AM PT with artifact uploads
 
 ### Demo Mode
 
@@ -144,33 +253,40 @@ cat output/daily_summary.json | jq
 
 ```bash
 # Clone repository
-git clone https://github.com/dotlink-ops/nextjs.git
-cd nextjs
+git clone https://github.com/dotlink-ops/Avidelta.git
+cd Avidelta
 
-# Run automated setup (Python + Next.js)
-./setup.sh
+# Install Python dependencies
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r scripts/requirements.txt
 
-# Install pre-commit hooks (recommended for contributors)
+# Install Node.js dependencies
+npm install
+
+# Create output directories
+mkdir -p output/notes output/backups
+
+# Copy environment template
+cp .env.example .env.local
+
+# Install pre-commit hooks (optional)
 pip install pre-commit detect-secrets
 pre-commit install
 ```
 
-**What the setup script does:**
-1. ✅ Creates Python virtual environment (`venv/` in repo root)
+**What this does:**
+1. ✅ Creates Python virtual environment (`.venv/` in repo root)
 2. ✅ Installs Python dependencies from `scripts/requirements.txt` (openai, PyGithub, python-dotenv)
 3. ✅ Installs Node.js dependencies (Next.js 16, React 19, TypeScript)
 4. ✅ Creates output directories (`output/notes`, `output/backups`)
-5. ✅ Copies `.env.example` to `.env.local` if needed
-6. ✅ Provides clear next steps
+5. ✅ Copies `.env.example` to `.env.local` for configuration
 
 **Pre-commit hooks (optional but recommended):**
 - Automatically validates code quality before commits
 - Checks YAML/JSON syntax, whitespace, line endings
 - Detects accidentally committed secrets (API keys, tokens)
 - Updates security dashboard automatically
-- Run `pre-commit install` to enable (requires one-time setup)
-
-**Note:** The script is already executable. If needed: `chmod +x scripts/setup.sh`
 
 **Time to complete:** ~2-3 minutes (depending on internet speed)
 
@@ -187,8 +303,8 @@ cd nextjs
 npm install
 
 # 3. Set up Python environment
-python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r scripts/requirements.txt
 
 # 4. Configure environment (optional for demo mode)
@@ -240,10 +356,8 @@ open http://localhost:3000/api/daily-summary
 | `python3 scripts/daily_v2.py --demo` | Run with demo data | Testing without API keys |
 | `python3 scripts/daily_v2.py --dry-run` | Alias for --demo | Common convention for safe testing |
 | `python3 scripts/daily_v2.py` | Run in production mode | Real automation with API keys configured |
-| `source venv/bin/activate` | Activate Python virtualenv | Before running scripts manually |
+| `source .venv/bin/activate` | Activate Python virtualenv | Before running scripts manually ||
 | `./run-daily.sh` | Automated run + sync | Convenience wrapper for production |
-| `./scripts/setup.sh` | One-command setup | Initial setup or reset environment |
-| `bash scripts/validate.sh` | Run all tests | Comprehensive validation |
 
 ### Live Deployment
 
@@ -270,11 +384,11 @@ nextjs/
 ├── components/                  # Shared React components
 │   └── DailySummaryPanel.tsx   # Main dashboard component
 ├── scripts/                     # Python automation stack
-│   ├── daily_v2.py             # Main automation runner (370 lines)
+│   ├── daily_v2.py             # Main automation runner
+│   ├── update_security_dashboard.py  # Security metrics
+│   ├── csp-reporter.js         # CSP violation reporter
 │   ├── requirements.txt        # Python dependencies
-│   ├── setup-automation.sh     # Environment setup script
-│   ├── sync-to-frontend.sh     # Output sync script
-│   └── validate.sh             # Comprehensive testing
+│   └── lib/                    # Shared library modules
 ├── output/                      # Automation outputs (gitignored except samples)
 │   ├── daily_summary.json      # Main output (served by API)
 │   ├── audit_*.json            # Timestamped audit logs
@@ -306,7 +420,7 @@ nextjs/
 1. **Python → JSON**: `scripts/daily_v2.py` outputs to `output/daily_summary.json`
 2. **JSON → API**: `app/api/daily-summary/route.ts` serves the JSON with caching
 3. **API → UI**: `components/DailySummaryPanel.tsx` fetches and renders data
-4. **Sync Script**: `scripts/sync-to-frontend.sh` handles backups and updates
+4. **GitHub Actions**: Automated daily runs at 5 AM PT via workflow
 
 ---
 
@@ -325,11 +439,8 @@ nextjs/
 **Execute from the repo root:**
 
 ```bash
-# One-time setup (if not already done)
-./scripts/setup.sh
-
 # Activate virtualenv
-source venv/bin/activate
+source .venv/bin/activate
 
 # Demo mode - safe to try, no real API calls
 python3 scripts/daily_v2.py --demo
@@ -385,12 +496,6 @@ npm start
 ---
 
 ## 🧪 Testing and Validation
-
-**Comprehensive Test Suite:**
-```bash
-# Run all validation checks (Python + Next.js + linting)
-bash scripts/validate.sh
-```
 
 **Individual Tests:**
 ```bash
@@ -508,7 +613,7 @@ NOTES_SOURCE=./output/notes
 cat scripts/requirements.txt
 
 # Install in virtual environment
-source venv/bin/activate
+source .venv/bin/activate
 pip install -r scripts/requirements.txt
 
 # Verify installation
@@ -521,20 +626,11 @@ pip list | grep -E "openai|github|dotenv"
 
 ### Automated Validation
 
-```bash
-# Run comprehensive test suite
-bash scripts/validate.sh
-```
+GitHub Actions workflows provide automated testing:
 
-**Tests Include:**
-- ✅ Python environment check
-- ✅ Dependency verification
-- ✅ File structure validation
-- ✅ Automation script execution (demo mode)
-- ✅ Output file validation
-- ✅ Next.js build test
-- ✅ TypeScript compilation
-- ✅ ESLint checks
+- ✅ **CI Workflow**: Runs on every push/PR (lint, type-check, build)
+- ✅ **Daily Automation**: Validates the daily runner at 5 AM PT
+- ✅ **Security Dashboard**: Monitors secrets and security metrics
 
 ### Manual Testing
 
@@ -647,7 +743,7 @@ This isn't a tutorial project or toy application—it's a **production system** 
 
 **What makes this valuable:**
 
-1. **Immediate Value**: You can clone this repo, run `./setup.sh`, and have a working system in 3 minutes
+1. **Immediate Value**: Clone this repo, install dependencies with `npm install` and `pip install -r scripts/requirements.txt`, and have a working system in 3 minutes
 2. **Adaptable Foundation**: Built to be customized—swap out note sources, change AI prompts, add new integrations
 3. **Production Patterns**: Every feature includes error handling, logging, and testing—not shortcuts or prototypes
 4. **Clear Documentation**: Comprehensive guides mean you can maintain and extend this without constant support

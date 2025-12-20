@@ -1,0 +1,41 @@
+# GitHub Actions workflow focused on quick code quality feedback
+name: Lint and Test
+
+on:
+  # Run for any direct pushes to main (e.g., maintainers merging small fixes)
+  push:
+    branches: ["main"]
+  # Run for pull requests targeting main so contributors get signals before merge
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  quality-checks:
+    name: Lint and test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # Grab the repository contents so the runner can work with the code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Install the Node.js version we expect developers to use; cache npm for speed
+      - name: Set up Node.js 22.21.1
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.21.1"
+          cache: npm
+
+      # Install dependencies exactly as locked in package-lock.json for reproducibility
+      - name: Install dependencies
+        run: npm ci
+
+      # Run ESLint to catch style and correctness issues early
+      - name: Run ESLint
+        run: npm run lint
+
+      # Execute the project's test suite; --if-present prevents failures if tests are not yet defined
+      - name: Run tests
+        run: npm test --if-present

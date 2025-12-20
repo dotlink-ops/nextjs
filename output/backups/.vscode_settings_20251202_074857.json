@@ -1,0 +1,23 @@
+{
+  "python.analysis.typeCheckingMode": "standard",
+  "python.analysis.diagnosticSeverityOverrides": {
+    // Imports: you often have optional deps in venv/docker
+    "reportMissingImports": "warning",      // don't scream, but still show
+
+    // Type discipline: keep these strict
+    "reportUnknownVariableType": "error",
+    "reportUnknownParameterType": "error",
+    "reportUnknownMemberType": "error",
+
+    // None / null handling
+    "reportOptionalMemberAccess": "warning",
+    "reportOptionalCall": "warning",
+
+    // Cleanliness: avoid noise where it slows you down
+    "reportUnusedImport": "information",
+    "reportUnusedVariable": "information",
+
+    // Often noisy during refactors; you can relax if needed
+    "reportGeneralTypeIssues": "error"
+  }
+}

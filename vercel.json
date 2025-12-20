@@ -1,5 +1,13 @@
 {
   "regions": ["iad1"],
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "engines": {
+    "node": "22.21.1"
+  },
+  "functions": {
+    "api/**": {
+      "runtime": "nodejs:22.x"
+    }
+  }
 }

@@ -47,7 +47,7 @@ jobs:
         # Pin to commit SHA for security: actions/setup-node@v4.1.0
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
-          node-version: 20
+          node-version: "22.21.1"
           registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies

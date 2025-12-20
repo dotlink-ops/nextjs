@@ -5,6 +5,13 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
+  // Project overrides
+  {
+    rules: {
+      // Reduce noise from widespread `any` usage while incremental typing improvements are made.
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
   // Override default ignores of eslint-config-next.
   globalIgnores([
     // Default ignores of eslint-config-next:

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body style="font-family: Inter, sans-serif; padding: 20px;">
+    <h2>Ariadne Nexus – Architecture Generator</h2>
+    <p>Click to generate full 4-layer blueprint inside your canvas.</p>
+    <button id="generate">Generate Blueprint</button>
+
+    <script>
+      document.getElementById("generate").onclick = () => {
+        parent.postMessage({ pluginMessage: { type: "generate-v2" } }, "*");
+      };
+    </script>
+  </body>
+</html>

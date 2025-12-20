@@ -1,5 +1,7 @@
 // app/services/page.tsx
 
+import Link from "next/link";
+
 export default function ServicesPage() {
   return (
     <main className="min-h-screen px-6 py-16 md:px-12 lg:px-24 bg-black text-zinc-50">
@@ -10,7 +12,7 @@ export default function ServicesPage() {
             Automation Services & Pricing
           </h1>
           <p className="text-xl text-zinc-300 max-w-3xl">
-            From &quot;everything lives in someone&apos;s head&quot; to &quot;it just happens.&quot;
+            From “everything lives in someone’s head” to “it just happens.”
           </p>
           <p className="text-lg text-zinc-400 max-w-3xl">
             These offers are for teams who want fewer manual tasks, cleaner handoffs, and automations that actually ship — not just live in a whiteboard.
@@ -20,7 +22,7 @@ export default function ServicesPage() {
         {/* 1. Hourly Rate */}
         <section className="space-y-6">
           <div className="space-y-2">
-            <h2 className="text-3xl font-semibold">1️⃣ Hourly "Lab Rate" – Avidelta Automation Studio</h2>
+            <h2 className="text-3xl font-semibold">1️⃣ Hourly “Lab Rate” – Avidelta Automation Studio</h2>
             <div className="flex items-baseline gap-3">
               <span className="text-4xl font-bold text-blue-400">$145</span>
               <span className="text-xl text-zinc-400">/hour</span>
@@ -56,7 +58,7 @@ export default function ServicesPage() {
         {/* 2. Fixed-Scope Packages */}
         <section className="space-y-8">
           <div className="space-y-2">
-            <h2 className="text-3xl font-semibold">2️⃣ Fixed-Scope Packages – "Automation Sprints"</h2>
+            <h2 className="text-3xl font-semibold">2️⃣ Fixed-Scope Packages – “Automation Sprints”</h2>
             <p className="text-zinc-400">
               Ideal when you want a clear outcome, clear scope, and clear price.
             </p>
@@ -106,9 +108,9 @@ export default function ServicesPage() {
               <ul className="space-y-1 text-zinc-300 text-sm">
                 <li>• Up to 3 core workflows automated (e.g., order intake, customer notifications, internal task creation)</li>
                 <li>• Up to 6 tool integrations</li>
-                <li>• Centralized "Ops Dashboard" (Notion, Airtable, or Sheets) to monitor key automations</li>
+                <li>• Centralized “Ops Dashboard” (Notion, Airtable, or Sheets) to monitor key automations</li>
                 <li>• Robust logging & error alerts (email/Slack notifications when something fails)</li>
-                <li>• SOPs: 3–5 short written SOPs for "How to use / reset / hand over"</li>
+                <li>• SOPs: 3–5 short written SOPs for “How to use / reset / hand over”</li>
                 <li>• 2 Loom trainings for the internal team</li>
                 <li>• 14 days of post-launch bug fixes and minor adjustments</li>
               </ul>
@@ -229,7 +231,7 @@ export default function ServicesPage() {
         <section className="bg-blue-600 rounded-xl p-8 text-center space-y-4">
           <h2 className="text-2xl font-semibold">Ready to automate?</h2>
           <p className="text-blue-100 max-w-2xl mx-auto">
-            Book a 15-minute fit call to walk through your current workflows, rough pain points, and what "done" looks like. We'll decide together whether hourly, a sprint, or a retainer makes the most sense.
+            Book a 15-minute fit call to walk through your current workflows, rough pain points, and what “done” looks like. We’ll decide together whether hourly, a sprint, or a retainer makes the most sense.
           </p>
           <div className="flex flex-wrap gap-3 justify-center pt-2">
             <a
@@ -240,12 +242,12 @@ export default function ServicesPage() {
             >
               Book a 15-min Call
             </a>
-            <a
+            <Link
               href="/"
               className="px-6 py-3 bg-transparent border-2 border-white text-white rounded-lg font-medium hover:bg-white/10 transition"
             >
               Back to Home
-            </a>
+            </Link>
           </div>
         </section>
 
@@ -262,7 +264,7 @@ export default function ServicesPage() {
             <li>• A Next.js frontend on Vercel (ariadnenexus.com) as the presentation layer</li>
           </ul>
           <p className="text-zinc-400 max-w-3xl">
-            What you're reading here is the "front-of-house" view of the same automation engine I'd deploy inside your business.
+            What you’re reading here is the “front-of-house” view of the same automation engine I’d deploy inside your business.
           </p>
         </section>
       </div>
