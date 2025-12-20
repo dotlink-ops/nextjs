@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f  # v6.1.0
         with:
-          node-version: "20"
+          node-version: "22.21.1"
           cache: "npm"
 
       - name: Install Node.js dependencies
@@ -46,6 +46,16 @@ jobs:
             echo "✓ Linting passed"
           else
             echo "⚠️  No lint script defined in package.json, skipping"
+          fi
+
+      - name: Runtime policy check (Edge vs Node)
+        run: |
+          if [ -f package.json ] && npm run --silent 2>/dev/null | grep -q "check:runtime"; then
+            echo "Running runtime policy check..."
+            npm run check:runtime
+            echo "✓ Runtime policy check passed"
+          else
+            echo "⚠️  No check:runtime script defined in package.json, skipping runtime policy check"
           fi
 
       - name: Build (Next.js)

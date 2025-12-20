@@ -1,117 +1,128 @@
-# Avidelta — Investor Summary
+# Investor Summary — Avidelta Automation Stack
 
-**Prepared for:** Investor Meeting  
-**Date:** December 2025  
-**Platform:** Avidelta (branded as Ariadne Nexus)
+**Last Updated:** 2025-12-02
 
 ---
 
 ## Executive Summary
 
-Avidelta is a **production-ready AI automation platform** that transforms unstructured daily work notes into actionable intelligence. The system ingests notes, generates structured summaries using OpenAI GPT-4 Turbo, and automatically creates tracked GitHub issues—reducing manual synthesis time by **87%** (from 30 minutes to under 5 seconds daily).
+Avidelta is a production-ready automation framework that demonstrates enterprise-grade workflow automation capabilities. The system transforms unstructured daily inputs into structured outputs, automated GitHub issue tracking, and stakeholder-ready summaries—reducing manual synthesis time by approximately 30 minutes per day.
+
+**Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
 
 ---
 
-## Key Value Propositions
-
-- **Time Savings:** Automates 15–30 minutes of daily manual work per user
-- **Actionable Intelligence:** Transforms raw notes into structured summaries and tracked tasks
-- **Audit Trail:** Every action is logged with timestamps for compliance and traceability
-- **Client-Ready:** Live demo site deployed at [ariadnenexus.com](https://www.ariadnenexus.com)
-
----
-
-## Platform Capabilities
+## What We Built
 
 ### Core Automation Engine
-- One-command daily runner (`daily_v2.py`) with Python 3.11
-- AI-powered summarization via OpenAI GPT-4 Turbo API
-- Automatic GitHub issue creation with smart labeling
-- Demo mode for zero-cost testing and demonstrations
-- JSON output for downstream integrations
+
+A one-command daily runner that:
+
+1. **Ingests** raw notes and work updates from local files
+2. **Processes** using OpenAI GPT-4 to extract key events, decisions, risks, and action items
+3. **Creates** labeled GitHub issues automatically from action items
+4. **Outputs** structured JSON for downstream systems and dashboards
+5. **Logs** comprehensive audit trails for compliance and debugging
 
 ### Frontend Dashboard
-- Modern Next.js 16 + React 19 + TypeScript stack
-- Real-time API endpoints serving automation results
-- Responsive design with Tailwind CSS 4
-- 10+ health and status monitoring endpoints
 
-### DevOps & Security
-- GitHub Actions CI/CD pipeline (tested on Node 18/20/22)
-- Secret scanning and push protection
-- Environment isolation with `.env` configuration
-- Automated daily runs at 5 AM PT
+A modern Next.js 16 web application that:
+
+- Surfaces automation outputs through clean API endpoints
+- Provides live demo capabilities without API costs (demo mode)
+- Deploys automatically to Vercel with zero-downtime updates
+- Includes comprehensive health checks and monitoring
 
 ---
 
-## Technology Stack
+## Key Metrics
 
-| Layer | Technology |
-|-------|------------|
-| Backend | Python 3.11, OpenAI API, PyGithub |
-| Frontend | Next.js 16, React 19, TypeScript |
-| Styling | Tailwind CSS 4 |
-| Deployment | Vercel (auto-deploy on push) |
-| CI/CD | GitHub Actions |
-| AI Model | GPT-4 Turbo |
-
----
-
-## Traction & Metrics
-
-- **Live Production Site:** [ariadnenexus.com](https://www.ariadnenexus.com)
-- **Daily Automation:** Runs automatically every day at 5 AM PT
-- **Documentation:** 2,000+ lines across 10+ guides
-- **API Endpoints:** 10+ health checks and data routes
-- **Build Status:** 100% passing CI across 3 Node.js versions
+| Metric | Value |
+|--------|-------|
+| Time savings per day | ~30 minutes |
+| Setup time | < 5 minutes |
+| Demo mode | Works without API keys |
+| Deployment | Automatic via Vercel |
+| Documentation | 2,000+ lines across 10+ files |
 
 ---
 
-## Business Model Opportunities
+## Technical Stack
 
-1. **SaaS Offering:** Multi-tenant platform for teams to automate daily workflows
-2. **White-Label Licensing:** Rebrandable automation engine for enterprise clients
-3. **Consulting Services:** Custom automation implementations for specific industries
-4. **API Marketplace:** Integrations with Slack, Notion, Google Workspace, CRMs
+**Backend:** Python 3.11, OpenAI API (GPT-4 Turbo), GitHub REST API, PyGithub
 
----
+**Frontend:** Next.js 16, React 19, TypeScript, Tailwind CSS 4
 
-## Competitive Advantages
-
-- **Working Production System:** Not a prototype—actively used for daily operations
-- **AI-Native Architecture:** Built from the ground up with OpenAI integration
-- **Extensible Design:** Modular components for easy customization
-- **Investor-Ready Packaging:** Complete documentation, demo mode, and deployment infrastructure
+**Infrastructure:** Vercel (hosting), GitHub Actions (CI/CD), environment-based secrets management
 
 ---
 
-## Roadmap Highlights
+## Business Value Proposition
 
-| Phase | Timeline | Milestone |
-|-------|----------|-----------|
-| **Phase 1** | Q1 2026 | Multi-source ingestion (Notion, Slack, Email) |
-| **Phase 2** | Q2 2026 | Team dashboards with role-based access |
-| **Phase 3** | Q3 2026 | Mobile companion app |
-| **Phase 4** | Q4 2026 | Enterprise SSO and compliance certifications |
+### For Solo Operators & Small Teams
+
+- **Time Recovery:** Eliminates 15-30 minutes of daily manual synthesis
+- **Audit Trail:** Creates documented history for compliance and handoffs
+- **Repeatability:** Ensures consistent, error-free workflows
+
+### For Clients
+
+- **Adaptable Framework:** Connects to your data sources (Notion, Slack, Google Docs, etc.)
+- **Domain Customization:** AI prompts tunable for legal, medical, sales, or engineering contexts
+- **Integration Ready:** Extends to Slack notifications, email digests, and custom dashboards
+
+### For Investors
+
+- **Production Patterns:** This isn't a prototype—it's a working system with error handling, logging, and testing
+- **Scalable Architecture:** Designed to grow from solo use to team collaboration
+- **Clear Documentation:** Comprehensive guides enable maintenance without constant support
 
 ---
 
-## Ask
+## Competitive Differentiation
 
-- **Seed Round:** $[TBD] to accelerate product development and initial GTM
-- **Use of Funds:**
-  - 60% Engineering (multi-source integrations, team features)
-  - 25% Go-to-Market (sales, marketing, customer success)
-  - 15% Operations (infrastructure, security, compliance)
+1. **Full-Stack Ownership:** End-to-end system from data ingestion to user-facing dashboard
+2. **AI-First Design:** OpenAI integration is core, not bolted on
+3. **Developer Experience:** Clean entry points, demo mode, comprehensive docs
+4. **Production Ready:** Includes CI/CD, health checks, and audit logging out of the box
+
+---
+
+## Use Case Examples
+
+| Scenario | Before | After |
+|----------|--------|-------|
+| Daily standup prep | 15-30 min manual review | < 5 seconds automated |
+| Task tracking | Manual GitHub issue creation | Auto-generated with labels |
+| Stakeholder updates | Ad-hoc notes | Structured JSON + dashboard |
+| Onboarding | Tribal knowledge | Documented workflows |
+
+---
+
+## Roadmap
+
+### Near-Term (Q1 2025)
+
+- Slack integration for real-time notifications
+- Email digest option for daily summaries
+- Enhanced AI triage for automatic issue prioritization
+
+### Mid-Term (Q2-Q3 2025)
+
+- Multi-source note ingestion (Notion, Obsidian, Google Docs)
+- Team collaboration features
+- Custom dashboard visualizations
 
 ---
 
 ## Contact
 
-- **Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
-- **Repository:** [github.com/dotlink-ops/Avidelta](https://github.com/dotlink-ops/Avidelta)
-- **Status Dashboard:** [ariadnenexus.com/api/status](https://www.ariadnenexus.com/api/status)
+**Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
+
+**Repository:** [github.com/dotlink-ops/Avidelta](https://github.com/dotlink-ops/Avidelta)
+
+**Schedule a Call:** [cal.com/avidelta/15min](https://cal.com/avidelta/15min)
 
 ---
 
-*Generated from Avidelta automation platform — the system that builds itself.*
+*Built with care by [automation.link](https://automation.link)* 🤖

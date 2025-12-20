@@ -28,7 +28,7 @@ jobs:
       - name: Set up Node.js 20 (LTS)
         uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: "22.21.1"
           cache: npm
 
       # Install dependencies exactly as locked in package-lock.json for reproducibility

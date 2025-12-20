@@ -1,0 +1,18 @@
+{
+  "defaultRuntime": "node",
+  "edgeAllowedPaths": [
+    "app/api/ping/route.ts",
+    "app/api/health/route.ts"
+  ],
+  "edgeForbiddenImports": [
+    "child_process",
+    "fs",
+    "net",
+    "tls",
+    "crypto",
+    "worker_threads"
+  ],
+  "edgeForbiddenGlobals": [
+    "process."
+  ]
+}

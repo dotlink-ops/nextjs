@@ -6,19 +6,29 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Least-privilege permissions
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
 
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        node-version: ["22.21.1"]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout repository
+      # Pin to commit SHA for security: actions/checkout@v4.2.2
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v6
+      # Pin to commit SHA for security: actions/setup-node@v4.1.0
+      uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
@@ -33,3 +43,59 @@ jobs:
       run: npm run build
       env:
         CI: true
+
+    - name: Generate job summary
+      if: always()
+      run: |
+        echo "## 🏗️ Next.js CI Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Node.js:** ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        if [ "${{ job.status }}" = "success" ]; then
+          echo "✅ Build and lint passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Build or lint failed" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: Notify Slack (success)
+      if: success()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      run: |
+        if [ -z "$SLACK_WEBHOOK" ]; then
+          echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+          exit 0
+        fi
+        payload=$(cat <<EOF
+        {
+          "text": "✅ *${GITHUB_WORKFLOW}* passed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (Node ${{ matrix.node-version }}, commit \`${GITHUB_SHA::7}\`)."
+        }
+        EOF
+        )
+        curl -X POST -H 'Content-type: application/json' \
+          --data "$payload" \
+          "$SLACK_WEBHOOK"
+        echo "✓ Success notification sent to Slack"
+
+    - name: Notify Slack (failure)
+      if: failure()
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+      run: |
+        if [ -z "$SLACK_WEBHOOK" ]; then
+          echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+          exit 0
+        fi
+        payload=$(cat <<EOF
+        {
+          "text": "❌ *${GITHUB_WORKFLOW}* failed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (Node ${{ matrix.node-version }}, commit \`${GITHUB_SHA::7}\`).\nSee details: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+        }
+        EOF
+        )
+        curl -X POST -H 'Content-type: application/json' \
+          --data "$payload" \
+          "$SLACK_WEBHOOK"
+        echo "✓ Failure notification sent to Slack"

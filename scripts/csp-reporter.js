@@ -40,7 +40,7 @@
  * receives and aggregates the reports.
  */
 
-const express = require('express');
+import express from 'express';
 const app = express();
 
 // Accept legacy CSP reports (single object under "csp-report")

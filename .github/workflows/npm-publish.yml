@@ -7,27 +7,107 @@ on:
   release:
     types: [created]
 
+# Least-privilege permissions
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
+      - name: Checkout repository
+        # Pin to commit SHA for security: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Node.js
+        # Pin to commit SHA for security: actions/setup-node@v4.1.0
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
           node-version: 20
-      - run: npm ci
-      - run: npm test
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
 
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v6
+      - name: Checkout repository
+        # Pin to commit SHA for security: actions/checkout@v4.2.2
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+
+      - name: Setup Node.js
+        # Pin to commit SHA for security: actions/setup-node@v4.1.0
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
-          node-version: 20
+          node-version: "22.21.1"
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm publish
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Publish to npm
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+
+      - name: Generate job summary
+        if: always()
+        run: |
+          echo "## 📦 npm Publish Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Release:** ${{ github.event.release.tag_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Package published successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Package publish failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify Slack (success)
+        if: success()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "✅ *${GITHUB_WORKFLOW}* published \`${{ github.event.release.tag_name }}\` in \`${GITHUB_REPOSITORY}\`."
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Success notification sent to Slack"
+
+      - name: Notify Slack (failure)
+        if: failure()
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        run: |
+          if [ -z "$SLACK_WEBHOOK" ]; then
+            echo "⚠️  SLACK_WEBHOOK not configured, skipping notification"
+            exit 0
+          fi
+          payload=$(cat <<EOF
+          {
+            "text": "❌ *${GITHUB_WORKFLOW}* failed to publish \`${{ github.event.release.tag_name }}\` in \`${GITHUB_REPOSITORY}\`.\nSee details: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          }
+          EOF
+          )
+          curl -X POST -H 'Content-type: application/json' \
+            --data "$payload" \
+            "$SLACK_WEBHOOK"
+          echo "✓ Failure notification sent to Slack"

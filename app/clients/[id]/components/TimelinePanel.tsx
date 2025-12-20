@@ -14,7 +14,9 @@ export default function TimelinePanel({ clientId }: { clientId: string }) {
   }
 
   useEffect(() => {
-    loadItems();
+    (async () => {
+      await loadItems();
+    })();
 
     // --- Realtime subscription ---
     const channel = supabaseClient
@@ -29,7 +31,7 @@ export default function TimelinePanel({ clientId }: { clientId: string }) {
         },
         async (payload) => {
           console.log("Realtime update:", payload);
-          loadItems(); // reload timeline immediately
+          (async () => { await loadItems(); })();
         }
       )
       .subscribe();
