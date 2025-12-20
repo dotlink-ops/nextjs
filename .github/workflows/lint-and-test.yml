@@ -13,6 +13,11 @@ jobs:
   quality-checks:
     name: Lint and test
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: write
+      issues: write
 
     steps:
       # Grab the repository contents so the runner can work with the code
