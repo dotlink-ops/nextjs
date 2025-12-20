@@ -1,14 +1,14 @@
-# Avidelta — Investor Summary
+# nexus-core — Investor Summary
 
 **Prepared for:** Investor Meeting  
 **Date:** December 2025  
-**Platform:** Avidelta (branded as Ariadne Nexus)
+**Platform:** nexus-core (branded as Ariadne Nexus)
 
 ---
 
 ## Executive Summary
 
-Avidelta is a **production-ready AI automation platform** that transforms unstructured daily work notes into actionable intelligence. The system ingests notes, generates structured summaries using OpenAI GPT-4 Turbo, and automatically creates tracked GitHub issues—reducing manual synthesis time by **87%** (from 30 minutes to under 5 seconds daily).
+nexus-core is a **production-ready AI automation platform** that transforms unstructured daily work notes into actionable intelligence. The system ingests notes, generates structured summaries using OpenAI GPT-4 Turbo, and automatically creates tracked GitHub issues—reducing manual synthesis time by **87%** (from 30 minutes to under 5 seconds daily).
 
 ---
 
@@ -109,9 +109,9 @@ Avidelta is a **production-ready AI automation platform** that transforms unstru
 ## Contact
 
 - **Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
-- **Repository:** [github.com/dotlink-ops/Avidelta](https://github.com/dotlink-ops/Avidelta)
+- **Repository:** [github.com/dotlink-ops/nexus-core](https://github.com/dotlink-ops/nexus-core)
 - **Status Dashboard:** [ariadnenexus.com/api/status](https://www.ariadnenexus.com/api/status)
 
 ---
 
-*Generated from Avidelta automation platform — the system that builds itself.*
+*Generated from nexus-core automation platform — the system that builds itself.*

@@ -22,7 +22,7 @@ export default function ServicesPage() {
         {/* 1. Hourly Rate */}
         <section className="space-y-6">
           <div className="space-y-2">
-            <h2 className="text-3xl font-semibold">1️⃣ Hourly “Lab Rate” – Avidelta Automation Studio</h2>
+            <h2 className="text-3xl font-semibold">1️⃣ Hourly “Lab Rate” – nexus-core Automation Studio</h2>
             <div className="flex items-baseline gap-3">
               <span className="text-4xl font-bold text-blue-400">$145</span>
               <span className="text-xl text-zinc-400">/hour</span>
@@ -149,7 +149,7 @@ export default function ServicesPage() {
           <div className="space-y-2">
             <h2 className="text-3xl font-semibold">3️⃣ Monthly Retainers – Automation + Monitoring + Tweaks</h2>
             <p className="text-zinc-400">
-              For clients who don&apos;t want to think about their automations day-to-day. You own the systems; Avidelta keeps them alive and evolving.
+              For clients who don&apos;t want to think about their automations day-to-day. You own the systems; nexus-core keeps them alive and evolving.
             </p>
           </div>
 
@@ -157,7 +157,7 @@ export default function ServicesPage() {
             {/* Tier 1 */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
               <div>
-                <h3 className="text-xl font-semibold">Avidelta Care</h3>
+                <h3 className="text-xl font-semibold">nexus-core Care</h3>
                 <div className="text-2xl font-bold text-blue-400 mt-2">$1,500/month</div>
               </div>
 
@@ -182,7 +182,7 @@ export default function ServicesPage() {
                 <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full">POPULAR</span>
               </div>
               <div>
-                <h3 className="text-xl font-semibold">Avidelta Growth · <span className="text-zinc-400 font-normal italic">Most Popular</span></h3>
+                <h3 className="text-xl font-semibold">nexus-core Growth · <span className="text-zinc-400 font-normal italic">Most Popular</span></h3>
                 <div className="text-2xl font-bold text-blue-400 mt-2">$3,250/month</div>
               </div>
 
@@ -205,7 +205,7 @@ export default function ServicesPage() {
             {/* Tier 3 */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-4">
               <div>
-                <h3 className="text-xl font-semibold">Avidelta Partner</h3>
+                <h3 className="text-xl font-semibold">nexus-core Partner</h3>
                 <div className="text-2xl font-bold text-blue-400 mt-2">$6,500+/month</div>
               </div>
 
@@ -221,7 +221,7 @@ export default function ServicesPage() {
               </div>
 
               <p className="text-xs text-zinc-400 italic pt-2 border-t border-zinc-800">
-                Best for teams treating Avidelta as a fractional Head of Automation + build team.
+                Best for teams treating nexus-core as a fractional Head of Automation + build team.
               </p>
             </div>
           </div>

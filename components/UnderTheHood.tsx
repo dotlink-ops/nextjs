@@ -1,4 +1,4 @@
-// Figma: Avidelta Design System → Automation Status / Under the Hood
+// Figma: nexus-core Design System → Automation Status / Under the Hood
 
 import React from 'react';
 
@@ -20,7 +20,7 @@ export default function UnderTheHood({
   lastRunTime = "5:00 AM PT (scheduled)",
   lastRunStatus = "success",
   recentRuns = [],
-  actionsUrl = "https://github.com/dotlink-ops/Avidelta/actions/workflows/daily-run.yml",
+  actionsUrl = "https://github.com/dotlink-ops/nexus-core/actions/workflows/daily-run.yml",
   notionDailyOpsUrl,
 }: UnderTheHoodProps) {
   const statusLabel =
@@ -139,7 +139,7 @@ export default function UnderTheHood({
                   {/* Body - Figma: Body / Default */}
                   <p className="text-sm text-zinc-400">
                     A scheduled workflow in <code className="text-xs bg-zinc-900 border border-zinc-800 px-2 py-1 rounded">daily-run.yml</code> checks 
-                    out the Avidelta / Ariadne repo and spins up a clean Python environment.
+                    out the nexus-core / Ariadne repo and spins up a clean Python environment.
                   </p>
                 </div>
               </li>

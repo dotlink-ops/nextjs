@@ -1,6 +1,6 @@
-# 🛡️ Avidelta Security & Secrets Compliance Checklist
+# 🛡️ nexus-core Security & Secrets Compliance Checklist
 
-**Repository:** dotlink-ops/Avidelta  
+**Repository:** dotlink-ops/nexus-core  
 **Maintainer:** @kamarfoster  
 **Last Verified:** 2025-11-29
 
@@ -58,7 +58,7 @@
 2. **Update GitHub Secrets**
    ```bash
    # Repository-level secret
-   gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$NEW_KEY"
+   gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$NEW_KEY"
 
    # Environment-specific secrets (staging/production)
    # Via UI: Settings → Environments → [env] → Update secret
@@ -263,10 +263,10 @@ gh run list --limit 10
 gh run list --workflow=secret-health.yml --limit 5
 
 # List configured secrets (names only, not values)
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 
 # View branch protection rules
-gh api repos/dotlink-ops/Avidelta/branches/main/protection | jq
+gh api repos/dotlink-ops/nexus-core/branches/main/protection | jq
 
 # Check CODEOWNERS syntax
 cat .github/CODEOWNERS
@@ -281,12 +281,12 @@ gh workflow run secret-health.yml
 gh run view --log
 
 # Check for security advisories
-gh api repos/dotlink-ops/Avidelta/vulnerability-alerts
+gh api repos/dotlink-ops/nexus-core/vulnerability-alerts
 ```
 
 ---
 
-**Maintained by:** Avidelta Infrastructure & Automation Team  
+**Maintained by:** nexus-core Infrastructure & Automation Team  
 **Document Version:** 1.0  
 **Last Updated:** 2025-11-29  
 **Next Review:** 2025-12-29

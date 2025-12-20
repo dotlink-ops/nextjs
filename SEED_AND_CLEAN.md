@@ -2,7 +2,7 @@
 
 **Last Updated**: 2025-12-02
 
-This document provides a summary of all open issues and PRs in the dotlink-ops/Avidelta repository, along with the normalized label scheme for organizing work.
+This document provides a summary of all open issues and PRs in the dotlink-ops/nexus-core repository, along with the normalized label scheme for organizing work.
 
 ---
 
@@ -57,7 +57,7 @@ Labels prefixed with `type:` identify the kind of work:
 - **Description**: Daily automation summary for Nov 30. Covers daily runner setup, OpenAI/GitHub integration, and next priorities.
 - **Suggested Labels**: `area: python`, `type: chore`
 
-### Issue #44: Security Hardening Checklist (Avidelta)
+### Issue #44: Security Hardening Checklist (nexus-core)
 - **Status**: Open
 - **Created**: 2025-11-29
 - **Description**: Comprehensive security hardening checklist including secrets management, branch protection, secret scanning, and GitHub Actions restrictions.

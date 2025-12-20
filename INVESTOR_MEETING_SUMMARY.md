@@ -2,14 +2,14 @@
 
 **Prepared for:** Upcoming Investor Meeting  
 **Date:** December 10, 2025  
-**Platform:** Avidelta (Ariadne Nexus)  
+**Platform:** nexus-core (Ariadne Nexus)  
 **Status:** Production-Ready, Revenue Opportunity
 
 ---
 
 ## Executive Summary (30-Second Pitch)
 
-Avidelta is a **live, production AI automation platform** that eliminates manual workflow overhead by transforming unstructured notes into actionable intelligence. Built on OpenAI GPT-4 and deployed at **ariadnenexus.com**, the system reduces daily synthesis work by **87%** (30 minutes → 5 seconds) while creating an audit trail for compliance and investor transparency.
+nexus-core is a **live, production AI automation platform** that eliminates manual workflow overhead by transforming unstructured notes into actionable intelligence. Built on OpenAI GPT-4 and deployed at **ariadnenexus.com**, the system reduces daily synthesis work by **87%** (30 minutes → 5 seconds) while creating an audit trail for compliance and investor transparency.
 
 ---
 
@@ -79,7 +79,7 @@ Avidelta is a **live, production AI automation platform** that eliminates manual
 
 ## Competitive Advantages
 
-| **Factor** | **Avidelta** | **Competitors** |
+| **Factor** | **nexus-core** | **Competitors** |
 |-----------|-------------|----------------|
 | **Production Status** | ✅ Live, revenue-ready | ❌ Mostly prototypes |
 | **AI Integration** | ✅ Native GPT-4 built-in | ⚠️ Add-on or manual |
@@ -167,13 +167,13 @@ Avidelta is a **live, production AI automation platform** that eliminates manual
 ## Appendix: Quick Links
 
 - **Live Demo:** [ariadnenexus.com](https://www.ariadnenexus.com)
-- **GitHub Repository:** [github.com/dotlink-ops/Avidelta](https://github.com/dotlink-ops/Avidelta)
+- **GitHub Repository:** [github.com/dotlink-ops/nexus-core](https://github.com/dotlink-ops/nexus-core)
 - **API Status:** [ariadnenexus.com/api/status](https://www.ariadnenexus.com/api/status)
 - **Technical Docs:** See README.md, ARCHITECTURE.md, AUTOMATION_GUIDE.md in repo
 
 ---
 
-**Prepared by:** Avidelta Team  
+**Prepared by:** nexus-core Team  
 **Contact:** Via GitHub or direct message  
 **Last Updated:** December 10, 2025
 

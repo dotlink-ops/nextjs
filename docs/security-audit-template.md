@@ -1,6 +1,6 @@
-# 🧮 Avidelta Security Audit Template (Quarterly Review)
+# 🧮 nexus-core Security Audit Template (Quarterly Review)
 
-**Repository:** dotlink-ops/Avidelta  
+**Repository:** dotlink-ops/nexus-core  
 **Maintainer:** @kamarfoster  
 **Audit Cycle:** FY2026  
 **Version:** v1.1 — Enterprise Security Baseline + Dashboard  
@@ -72,16 +72,16 @@
 gh run list --workflow=secret-health.yml --limit=30 --json status,conclusion
 
 # Check branch protection
-gh api repos/dotlink-ops/Avidelta/branches/main/protection | jq '.required_status_checks.contexts'
+gh api repos/dotlink-ops/nexus-core/branches/main/protection | jq '.required_status_checks.contexts'
 
 # List required checks
-gh api repos/dotlink-ops/Avidelta/branches/main/protection | jq '.required_status_checks.checks'
+gh api repos/dotlink-ops/nexus-core/branches/main/protection | jq '.required_status_checks.checks'
 
 # Verify action pinning (should return no results with @v tags)
 grep -r "uses:.*@v[0-9]" .github/workflows/ || echo "✓ All actions pinned to SHAs"
 
 # List collaborators
-gh api repos/dotlink-ops/Avidelta/collaborators | jq '.[].login'
+gh api repos/dotlink-ops/nexus-core/collaborators | jq '.[].login'
 ```
 
 ---
@@ -103,10 +103,10 @@ gh api repos/dotlink-ops/Avidelta/collaborators | jq '.[].login'
 **Audit Commands:**
 ```bash
 # List all secrets (names only, not values)
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 
 # Check when secrets were last updated (via API)
-gh api repos/dotlink-ops/Avidelta/actions/secrets | jq '.secrets[] | {name: .name, updated_at: .updated_at}'
+gh api repos/dotlink-ops/nexus-core/actions/secrets | jq '.secrets[] | {name: .name, updated_at: .updated_at}'
 
 # Test secret availability
 gh workflow run secret-health.yml
@@ -220,7 +220,7 @@ gh api orgs/dotlink-ops/members?filter=2fa_disabled | jq 'length'
 | Engineering Manager | <!-- name --> | <!-- yyyy-mm-dd --> | <!-- signature --> | Team commitment to remediation |
 
 **Certification Statement:**
-"I certify that this audit has been conducted in accordance with Avidelta security standards and that all findings have been accurately documented. Any exceptions or accepted risks have been formally approved and documented."
+"I certify that this audit has been conducted in accordance with nexus-core security standards and that all findings have been accurately documented. Any exceptions or accepted risks have been formally approved and documented."
 
 **Next Audit Due:** <!-- yyyy-mm-dd --> (90 days from completion date)
 
@@ -231,16 +231,16 @@ gh api orgs/dotlink-ops/members?filter=2fa_disabled | jq 'length'
 ### A. Reference Links
 
 **GitHub Actions:**
-- [Secret Health Workflow Runs](https://github.com/dotlink-ops/Avidelta/actions/workflows/secret-health.yml)
-- [Daily Summary Workflow Runs](https://github.com/dotlink-ops/Avidelta/actions/workflows/daily-summary.yml)
-- [CI Test Secrets Workflow Runs](https://github.com/dotlink-ops/Avidelta/actions/workflows/test-secrets.yml)
+- [Secret Health Workflow Runs](https://github.com/dotlink-ops/nexus-core/actions/workflows/secret-health.yml)
+- [Daily Summary Workflow Runs](https://github.com/dotlink-ops/nexus-core/actions/workflows/daily-summary.yml)
+- [CI Test Secrets Workflow Runs](https://github.com/dotlink-ops/nexus-core/actions/workflows/test-secrets.yml)
 
 **Repository Settings:**
-- [Secrets and Variables](https://github.com/dotlink-ops/Avidelta/settings/secrets/actions)
-- [Environments](https://github.com/dotlink-ops/Avidelta/settings/environments)
-- [Branches (Protection Rules)](https://github.com/dotlink-ops/Avidelta/settings/branches)
-- [Code Security and Analysis](https://github.com/dotlink-ops/Avidelta/settings/security_analysis)
-- [Collaborators and Teams](https://github.com/dotlink-ops/Avidelta/settings/access)
+- [Secrets and Variables](https://github.com/dotlink-ops/nexus-core/settings/secrets/actions)
+- [Environments](https://github.com/dotlink-ops/nexus-core/settings/environments)
+- [Branches (Protection Rules)](https://github.com/dotlink-ops/nexus-core/settings/branches)
+- [Code Security and Analysis](https://github.com/dotlink-ops/nexus-core/settings/security_analysis)
+- [Collaborators and Teams](https://github.com/dotlink-ops/nexus-core/settings/access)
 
 **Documentation:**
 - [SECURITY_COMPLIANCE.md](../../SECURITY_COMPLIANCE.md) - Master compliance checklist
@@ -310,7 +310,7 @@ gh api orgs/dotlink-ops/members?filter=2fa_disabled | jq 'length'
 ```bash
 # Set up GitHub CLI alias for quick checks
 gh alias set security-check 'run list --workflow=secret-health.yml --limit=7'
-gh alias set audit-stats 'api repos/dotlink-ops/Avidelta/stats/participation'
+gh alias set audit-stats 'api repos/dotlink-ops/nexus-core/stats/participation'
 
 # Run periodic checks
 gh security-check
@@ -336,7 +336,7 @@ gh security-check
 
 ---
 
-**Maintained by:** Avidelta Infrastructure & Automation Team  
+**Maintained by:** nexus-core Infrastructure & Automation Team  
 **Document Version:** v1.1  
 **Template Revision:** Enterprise Security Baseline + Executive Dashboard  
 **Last Updated:** 2025-11-29  

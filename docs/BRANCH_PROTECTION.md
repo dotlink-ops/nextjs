@@ -1,6 +1,6 @@
 # Branch Protection Configuration
 
-This document describes the branch protection ruleset configuration for the Avidelta repository.
+This document describes the branch protection ruleset configuration for the nexus-core repository.
 
 ---
 
@@ -21,7 +21,7 @@ This document describes the branch protection ruleset configuration for the Avid
 ### Repository Scope
 
 - **Type:** Repository-level ruleset
-- **Applies to:** `dotlink-ops/Avidelta` only
+- **Applies to:** `dotlink-ops/nexus-core` only
 - **Enforcement:** All matching branches in this repository
 
 ### Branch Targeting
@@ -412,7 +412,7 @@ git push
 
 ## Related Documentation
 
-- **Issue #44:** Security Hardening Checklist (Avidelta)
+- **Issue #44:** Security Hardening Checklist (nexus-core)
 - **TASK_HANDOFF.md:** Complete security configuration guide
 - **SECURITY_COMPLIANCE.md:** Overall security posture tracking
 - **docs/SECURITY_HARDENING.md:** Complete security implementation guide

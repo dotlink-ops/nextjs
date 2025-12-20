@@ -68,7 +68,7 @@ The root directory is clean with only expected configuration files:
 ## 📁 Final Directory Structure
 
 ```
-/workspaces/Avidelta/
+/workspaces/nexus-core/
 ├── app/
 │   ├── api/
 │   │   ├── slack/          ✅ All Slack routes grouped

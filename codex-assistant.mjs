@@ -1,8 +1,8 @@
-// Avidelta Repo Copilot config
+// nexus-core Repo Copilot config
 // Guides AI/Copilot agents when debugging or improving this repo.
 
 const config = {
-  name: "Avidelta Repo Copilot",
+  name: "nexus-core Repo Copilot",
   description: "AI assistant for debugging and improving the automation + Next.js portfolio stack.",
   model: "gpt-4-turbo",
 
@@ -20,7 +20,7 @@ const config = {
   },
 
   instructions: `
-You are an AI coding copilot wired into the Avidelta automation + Next.js portfolio repository.
+You are an AI coding copilot wired into the nexus-core automation + Next.js portfolio repository.
 
 Your job is to fix, debug, and improve:
 - The Python automation stack in scripts/ (daily_v2.py, requirements.txt, etc.)

@@ -1,12 +1,12 @@
-# Avidelta Architecture
+# nexus-core Architecture
 
-This document provides a high-level overview of the Avidelta system architecture, showing how notes flow through the automation pipeline to the frontend dashboard.
+This document provides a high-level overview of the nexus-core system architecture, showing how notes flow through the automation pipeline to the frontend dashboard.
 
 ---
 
 ## System Overview
 
-Avidelta is a **full-stack automation platform** with three main layers:
+nexus-core is a **full-stack automation platform** with three main layers:
 
 1. **Automation Engine** (Python) - Ingests notes, generates summaries with AI, creates GitHub issues
 2. **API Layer** (Next.js API Routes) - Exposes automation status, summaries, and metrics

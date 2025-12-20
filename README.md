@@ -1,6 +1,6 @@
-# Avidelta Automation + Portfolio Stack
+# nexus-core Automation + Portfolio Stack
 
-![Daily run status](https://github.com/dotlink-ops/Avidelta/actions/workflows/daily-run.yml/badge.svg)
+![Daily run status](https://github.com/dotlink-ops/nexus-core/actions/workflows/daily-run.yml/badge.svg)
 
 > **Automation-first platform that transforms daily work notes into actionable intelligence using AI**
 
@@ -8,9 +8,9 @@
 
 ---
 
-## 🏗️ What is Avidelta?
+## 🏗️ What is nexus-core?
 
-**Avidelta** (branded as **Ariadne Nexus** for clients) is a **production automation platform** that demonstrates how to build AI-powered workflows for real-world business operations. It combines:
+**nexus-core** (branded as **Ariadne Nexus** for clients) is a **production automation platform** that demonstrates how to build AI-powered workflows for real-world business operations. It combines:
 
 - **Python automation engine** (`daily_v2.py`) - Ingests unstructured notes, generates structured summaries with OpenAI, creates GitHub issues from action items
 - **Next.js 16 dashboard** - Modern App Router frontend with live automation status, workflow history, and security metrics
@@ -104,8 +104,8 @@ and extend the codebase.
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
+git clone https://github.com/dotlink-ops/nexus-core.git
+cd nexus-core
 
 # 2. Set up Python automation
 python3 -m venv .venv
@@ -260,8 +260,8 @@ cat output/daily_summary.json | jq
 
 ```bash
 # Clone repository
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
+git clone https://github.com/dotlink-ops/nexus-core.git
+cd nexus-core
 
 # Install Python dependencies
 python3 -m venv .venv
@@ -788,7 +788,7 @@ This isn't a tutorial project or toy application—it's a **production system** 
 
 ### 🤖 AI Assistant Integration
 
-This repository includes **Avidelta Repo Copilot** configuration:
+This repository includes **nexus-core Repo Copilot** configuration:
 
 - **`codex-assistant.mjs`**: Full-stack AI assistant configuration
   - Complete repository architecture knowledge

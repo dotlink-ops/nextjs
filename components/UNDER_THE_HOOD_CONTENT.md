@@ -17,7 +17,7 @@ This isn't just a dashboard — there's a real automation stack running behind i
 Every morning at 5:00 AM PT:
 
 1. **GitHub Actions wakes up the runner**  
-   A scheduled workflow in `.github/workflows/daily-run.yml` checks out the Avidelta / Ariadne repo and spins up a clean Python environment.
+   A scheduled workflow in `.github/workflows/daily-run.yml` checks out the nexus-core / Ariadne repo and spins up a clean Python environment.
 
 2. **Python + AI process your inputs**  
    A production script (`daily_v2.py`) ingests notes and operational data, then uses OpenAI to structure:

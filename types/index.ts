@@ -1,5 +1,5 @@
 /**
- * Core TypeScript interfaces for Nexus/Avidelta
+ * Core TypeScript interfaces for Nexus/nexus-core
  */
 
 export interface Client {

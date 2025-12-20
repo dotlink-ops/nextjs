@@ -3,7 +3,7 @@
 ## Quick Setup
 
 ### Add Secret via GitHub UI
-1. Go to: https://github.com/dotlink-ops/Avidelta/settings/secrets/actions
+1. Go to: https://github.com/dotlink-ops/nexus-core/settings/secrets/actions
 2. Click "New repository secret"
 3. Name: `OPENAI_API_KEY`
 4. Value: [Paste your OpenAI API key]
@@ -11,7 +11,7 @@
 
 ### Add Secret via GitHub CLI
 ```bash
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$YOUR_OPENAI_API_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$YOUR_OPENAI_API_KEY"
 ```
 
 ## How Secrets Work in Workflows
@@ -142,7 +142,7 @@ env:
 
 **View available secrets:**
 ```bash
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 ```
 
 ### Secret masking not working?
@@ -160,22 +160,22 @@ But won't mask:
 
 ### List secrets
 ```bash
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 ```
 
 ### Set secret
 ```bash
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$YOUR_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$YOUR_KEY"
 ```
 
 ### Set secret from file
 ```bash
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta < api-key.txt
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core < api-key.txt
 ```
 
 ### Delete secret
 ```bash
-gh secret delete OPENAI_API_KEY --repo dotlink-ops/Avidelta
+gh secret delete OPENAI_API_KEY --repo dotlink-ops/nexus-core
 ```
 
 ## Key Rotation Schedule
@@ -341,7 +341,7 @@ logger.debug(f"API key length: {len(api_key)} characters")
 # print(f"Key: {api_key}")  # DANGEROUS!
 ```
 
-## Current Setup for Avidelta
+## Current Setup for nexus-core
 
 **Required Secrets:**
 

@@ -38,12 +38,12 @@
 - [ ] Go to: `Settings → Secrets and variables → Actions`
 - [ ] Add OPENAI_API_KEY (if not already added)
   ```bash
-  gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta
+  gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core
   ```
 - [ ] Add SLACK_WEBHOOK for failure notifications
   ```bash
   # Get webhook from: https://api.slack.com/apps
-  gh secret set SLACK_WEBHOOK --repo dotlink-ops/Avidelta
+  gh secret set SLACK_WEBHOOK --repo dotlink-ops/nexus-core
   ```
 
 #### 3. Enable Branch Protection
@@ -175,10 +175,10 @@
 gh run list --workflow=secret-health.yml --limit=5
 
 # Check secrets (names only, not values)
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 
 # Verify branch protection
-gh api repos/dotlink-ops/Avidelta/branches/main/protection | jq
+gh api repos/dotlink-ops/nexus-core/branches/main/protection | jq
 
 # Check CODEOWNERS syntax
 cat .github/CODEOWNERS

@@ -1,6 +1,6 @@
-# Avidelta Setup Guide
+# nexus-core Setup Guide
 
-This guide walks you through setting up the Avidelta automation system locally, configuring environment variables, and troubleshooting common issues.
+This guide walks you through setting up the nexus-core automation system locally, configuring environment variables, and troubleshooting common issues.
 
 ---
 
@@ -51,8 +51,8 @@ choco install python nodejs git
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/dotlink-ops/Avidelta.git
-cd Avidelta
+git clone https://github.com/dotlink-ops/nexus-core.git
+cd nexus-core
 ```
 
 ### 2. Set Up Python Virtual Environment
@@ -113,7 +113,7 @@ code .env.local
 |----------|-------------|-----------------|
 | `OPENAI_API_KEY` | OpenAI API key for AI features | https://platform.openai.com/api-keys |
 | `GITHUB_TOKEN` | GitHub personal access token | https://github.com/settings/tokens |
-| `REPO_NAME` | GitHub repository (format: `owner/repo`) | e.g., `dotlink-ops/Avidelta` |
+| `REPO_NAME` | GitHub repository (format: `owner/repo`) | e.g., `dotlink-ops/nexus-core` |
 
 #### Optional Variables
 
@@ -136,7 +136,7 @@ Your GitHub token needs the following scopes:
 
 1. Go to https://github.com/settings/tokens
 2. Click "Generate new token (classic)"
-3. Give it a descriptive name: "Avidelta Automation"
+3. Give it a descriptive name: "nexus-core Automation"
 4. Select scopes: `repo` and `workflow`
 5. Click "Generate token"
 6. Copy the token and paste it into `.env.local`
@@ -149,7 +149,7 @@ Your GitHub token needs the following scopes:
 
 1. Go to https://platform.openai.com/api-keys
 2. Click "Create new secret key"
-3. Give it a name: "Avidelta"
+3. Give it a name: "nexus-core"
 4. Copy the key and paste it into `.env.local`
 
 ⚠️ **Note:** You'll need billing set up on your OpenAI account. Check https://platform.openai.com/account/billing
@@ -448,8 +448,8 @@ For production deployment via GitHub Actions, set these secrets in your reposito
 
 ## Getting Help
 
-- 🐛 **Found a bug?** Open an issue at https://github.com/dotlink-ops/Avidelta/issues
-- 💬 **Have questions?** Start a discussion at https://github.com/dotlink-ops/Avidelta/discussions
+- 🐛 **Found a bug?** Open an issue at https://github.com/dotlink-ops/nexus-core/issues
+- 💬 **Have questions?** Start a discussion at https://github.com/dotlink-ops/nexus-core/discussions
 - 📧 **Need support?** Contact the team at dotlink-ops
 
 ---

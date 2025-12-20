@@ -1,6 +1,6 @@
 # Copilot Task Handoff - Completion Summary
 
-This document summarizes the completion status of all tasks assigned to Copilot in the Avidelta repository.
+This document summarizes the completion status of all tasks assigned to Copilot in the nexus-core repository.
 
 ---
 
@@ -12,7 +12,7 @@ This document summarizes the completion status of all tasks assigned to Copilot 
 ### Deliverables
 
 1. **README.md Updates** ✅
-   - Added comprehensive "What is Avidelta?" section explaining the platform
+   - Added comprehensive "What is nexus-core?" section explaining the platform
    - Added detailed "How to Run Locally" section with prerequisites and quick start
    - Clarified project purpose: automation-first platform with production features
    - Maintained existing automation workflow documentation
@@ -78,7 +78,7 @@ This document summarizes the completion status of all tasks assigned to Copilot 
 
 ```bash
 # Created labels in repository
-area:nexus-core - Core Avidelta/Nexus automation platform (green #0e8a16)
+area:nexus-core - Core nexus-core/Nexus automation platform (green #0e8a16)
 type:chore - Maintenance, refactoring, tooling (purple #d4c5f9)
 type:feature - New features or enhancements (blue #a2eeef)
 type:bug - Bug fixes (red #d73a4a)
@@ -118,13 +118,13 @@ SLACK_WEBHOOK=your-slack-webhook-url-here
 
 ```bash
 # Via GitHub CLI (requires admin):
-gh api -X PUT repos/dotlink-ops/Avidelta/environments/staging
-gh api -X PUT repos/dotlink-ops/Avidelta/environments/production
+gh api -X PUT repos/dotlink-ops/nexus-core/environments/staging
+gh api -X PUT repos/dotlink-ops/nexus-core/environments/production
 
 # Add environment-specific secrets (safer than repo-wide):
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env staging
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env production
-gh secret set SLACK_WEBHOOK --repo dotlink-ops/Avidelta --env production
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env staging
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env production
+gh secret set SLACK_WEBHOOK --repo dotlink-ops/nexus-core --env production
 ```
 
 **Verification:**
@@ -162,7 +162,7 @@ Targets: dot-rail, dot-rail/*
 
 ```bash
 # Via GitHub CLI (requires admin):
-gh api -X PATCH repos/dotlink-ops/Avidelta \
+gh api -X PATCH repos/dotlink-ops/nexus-core \
   -H "Accept: application/vnd.github+json" \
   -f security_and_analysis.secret_scanning.status=enabled \
   -f security_and_analysis.secret_scanning_push_protection.status=enabled
@@ -178,12 +178,12 @@ gh api -X PATCH repos/dotlink-ops/Avidelta \
 
 ```bash
 # Via GitHub CLI (requires admin):
-gh api -X PUT repos/dotlink-ops/Avidelta/actions/permissions \
+gh api -X PUT repos/dotlink-ops/nexus-core/actions/permissions \
   -H "Accept: application/vnd.github+json" \
   -f enabled=true \
   -f allowed_actions=selected
 
-gh api -X PUT repos/dotlink-ops/Avidelta/actions/permissions/selected-actions \
+gh api -X PUT repos/dotlink-ops/nexus-core/actions/permissions/selected-actions \
   -H "Accept: application/vnd.github+json" \
   -f github_owned_allowed=true \
   -f verified_allowed=true
@@ -282,7 +282,7 @@ gh api -X PUT repos/dotlink-ops/Avidelta/actions/permissions/selected-actions \
    - Advanced configuration options
 
 3. **README.md** (enhanced)
-   - "What is Avidelta?" section added
+   - "What is nexus-core?" section added
    - "How to Run Locally" section added
    - Quick start with 6 commands
    - Running modes documented (demo, dry-run, production)
@@ -310,4 +310,4 @@ gh api -X PUT repos/dotlink-ops/Avidelta/actions/permissions/selected-actions \
 
 **Generated:** 2025-05-28  
 **Agent:** GitHub Copilot  
-**Context:** Takeover of all Copilot-assigned tasks in dotlink-ops/Avidelta repository
+**Context:** Takeover of all Copilot-assigned tasks in dotlink-ops/nexus-core repository

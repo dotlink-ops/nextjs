@@ -163,10 +163,10 @@ python workers/gcal_token_loader.py
 
 ```cron
 # Process knowledge items every 6 hours
-0 */6 * * * cd /workspaces/Avidelta && python workers/nexus_processing_worker.py >> logs/processing.log 2>&1
+0 */6 * * * cd /workspaces/nexus-core && python workers/nexus_processing_worker.py >> logs/processing.log 2>&1
 
 # Refresh Google Calendar token hourly
-0 * * * * cd /workspaces/Avidelta && python workers/gcal_token_loader.py >> logs/gcal_token.log 2>&1
+0 * * * * cd /workspaces/nexus-core && python workers/gcal_token_loader.py >> logs/gcal_token.log 2>&1
 ```
 
 ---

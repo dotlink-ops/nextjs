@@ -41,7 +41,7 @@ jobs:
 
           if [ -z "${OPENAI_API_KEY}" ]; then
             echo "✗ OPENAI_API_KEY missing"
-            echo "Add it at: https://github.com/dotlink-ops/Avidelta/settings/secrets/actions"
+            echo "Add it at: https://github.com/dotlink-ops/nexus-core/settings/secrets/actions"
             exit 1
           else
             echo "✓ OPENAI_API_KEY present (value masked)"
@@ -60,7 +60,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_NAME: dotlink-ops/Avidelta
+          REPO_NAME: dotlink-ops/nexus-core
         run: |
           python3 scripts/daily_v2.py
 

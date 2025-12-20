@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# One-Command Setup Script for Avidelta Automation Portfolio
+# One-Command Setup Script for nexus-core Automation Portfolio
 # Sets up Python automation + Next.js frontend stack
 
 set -e  # Exit on any error
@@ -16,7 +16,7 @@ PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PROJECT_ROOT"
 
 echo "============================================================"
-echo "🚀 Avidelta Automation Portfolio Setup"
+echo "🚀 nexus-core Automation Portfolio Setup"
 echo "============================================================"
 echo ""
 

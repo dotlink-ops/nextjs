@@ -1,14 +1,14 @@
-# Avidelta / Dotlink-Ops — Copilot Coding Agent Instructions
+# nexus-core / Dotlink-Ops — Copilot Coding Agent Instructions
 
 Last Updated: 2025-12-10  
-Owner: Kamar Foster (Ariadne Labs / Avidelta)  
-Repository: dotlink-ops/Avidelta  
+Owner: Kamar Foster (Ariadne Labs / nexus-core)  
+Repository: dotlink-ops/nexus-core  
 
 ---
 
 ## 1. Repository Purpose
 
-This repository powers the **Nexus Intelligence Platform** for Avidelta + Ariadne Labs, including:
+This repository powers the **Nexus Intelligence Platform** for nexus-core + Ariadne Labs, including:
 - **Next.js 16.0.7** front-end (Vercel deployment, App Router)
 - **Supabase** services (PostgreSQL + pgvector, Realtime, RLS)
 - **Python workers** for knowledge processing and automation
@@ -496,7 +496,7 @@ Copilot must:
 
 ---
 
-## 16. Future Directions (Ariadne Labs / Avidelta Roadmap)
+## 16. Future Directions (Ariadne Labs / nexus-core Roadmap)
 
 The repo will soon include:
 - Vision + Spatial models integration

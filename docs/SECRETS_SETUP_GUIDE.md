@@ -1,6 +1,6 @@
 # Secrets Setup Guide
 
-> Complete guide for configuring GitHub secrets for Avidelta repository
+> Complete guide for configuring GitHub secrets for nexus-core repository
 
 ## 📋 Quick Reference
 
@@ -32,16 +32,16 @@ export OPENAI_API_KEY="sk-your-actual-openai-api-key-here"
 export SLACK_WEBHOOK="https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
 
 # Add to repository secrets
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$OPENAI_API_KEY"
-gh secret set SLACK_WEBHOOK --repo dotlink-ops/Avidelta --body "$SLACK_WEBHOOK"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$OPENAI_API_KEY"
+gh secret set SLACK_WEBHOOK --repo dotlink-ops/nexus-core --body "$SLACK_WEBHOOK"
 
 # Verify secrets were added
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 ```
 
 ### Option 2: GitHub Web UI
 
-1. Navigate to: https://github.com/dotlink-ops/Avidelta/settings/secrets/actions
+1. Navigate to: https://github.com/dotlink-ops/nexus-core/settings/secrets/actions
 2. Click **"New repository secret"**
 3. Add each secret:
    - Name: `OPENAI_API_KEY`
@@ -62,12 +62,12 @@ Environment-scoped secrets are safer than repository-wide secrets because they:
 
 ```bash
 # Create staging and production environments
-gh api -X PUT repos/dotlink-ops/Avidelta/environments/staging
-gh api -X PUT repos/dotlink-ops/Avidelta/environments/production
+gh api -X PUT repos/dotlink-ops/nexus-core/environments/staging
+gh api -X PUT repos/dotlink-ops/nexus-core/environments/production
 ```
 
 **Or via Web UI:**
-1. Go to: https://github.com/dotlink-ops/Avidelta/settings/environments
+1. Go to: https://github.com/dotlink-ops/nexus-core/settings/environments
 2. Click **"New environment"**
 3. Enter name: `staging` (then repeat for `production`)
 
@@ -76,14 +76,14 @@ gh api -X PUT repos/dotlink-ops/Avidelta/environments/production
 ```bash
 # Staging secrets
 export OPENAI_API_KEY_STAGING="sk-staging-key-here"
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env staging --body "$OPENAI_API_KEY_STAGING"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env staging --body "$OPENAI_API_KEY_STAGING"
 
 # Production secrets (separate keys recommended)
 export OPENAI_API_KEY_PROD="sk-production-key-here"
 export SLACK_WEBHOOK_PROD="https://hooks.slack.com/services/YOUR/PROD/WEBHOOK"
 
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env production --body "$OPENAI_API_KEY_PROD"
-gh secret set SLACK_WEBHOOK --repo dotlink-ops/Avidelta --env production --body "$SLACK_WEBHOOK_PROD"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env production --body "$OPENAI_API_KEY_PROD"
+gh secret set SLACK_WEBHOOK --repo dotlink-ops/nexus-core --env production --body "$SLACK_WEBHOOK_PROD"
 ```
 
 ### Step 3: Use Environment-Scoped Secrets in Workflows
@@ -113,7 +113,7 @@ jobs:
 
 ```bash
 # Check if secrets exist (values are hidden)
-gh secret list --repo dotlink-ops/Avidelta
+gh secret list --repo dotlink-ops/nexus-core
 
 # Expected output:
 # OPENAI_API_KEY  Updated YYYY-MM-DD
@@ -124,23 +124,23 @@ gh secret list --repo dotlink-ops/Avidelta
 
 ```bash
 # Check staging environment secrets
-gh secret list --repo dotlink-ops/Avidelta --env staging
+gh secret list --repo dotlink-ops/nexus-core --env staging
 
 # Check production environment secrets
-gh secret list --repo dotlink-ops/Avidelta --env production
+gh secret list --repo dotlink-ops/nexus-core --env production
 ```
 
 ### Run Secret Health Workflow
 
 ```bash
 # Trigger manual run of secret validation
-gh workflow run secret-health.yml --repo dotlink-ops/Avidelta
+gh workflow run secret-health.yml --repo dotlink-ops/nexus-core
 
 # Wait a few seconds, then check status
-gh run list --workflow=secret-health.yml --repo dotlink-ops/Avidelta --limit 1
+gh run list --workflow=secret-health.yml --repo dotlink-ops/nexus-core --limit 1
 
 # View run details
-gh run view --repo dotlink-ops/Avidelta --web
+gh run view --repo dotlink-ops/nexus-core --web
 ```
 
 ---
@@ -154,10 +154,10 @@ gh run view --repo dotlink-ops/Avidelta --web
 **Solution:**
 ```bash
 # Re-add the secret with actual value
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$OPENAI_API_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$OPENAI_API_KEY"
 
 # Verify it was added
-gh secret list --repo dotlink-ops/Avidelta | grep OPENAI_API_KEY
+gh secret list --repo dotlink-ops/nexus-core | grep OPENAI_API_KEY
 ```
 
 ### Issue: "Environment not found"
@@ -167,10 +167,10 @@ gh secret list --repo dotlink-ops/Avidelta | grep OPENAI_API_KEY
 **Solution:**
 ```bash
 # Create the environment first
-gh api -X PUT repos/dotlink-ops/Avidelta/environments/production
+gh api -X PUT repos/dotlink-ops/nexus-core/environments/production
 
 # Then add secrets
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env production --body "$OPENAI_API_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env production --body "$OPENAI_API_KEY"
 ```
 
 ### Issue: Workflow fails with "Resource not accessible by integration"
@@ -234,11 +234,11 @@ jobs:
 
 ```bash
 # ✅ Good: Different keys per environment
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env staging --body "$STAGING_KEY"
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --env production --body "$PROD_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env staging --body "$STAGING_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --env production --body "$PROD_KEY"
 
 # ❌ Avoid: Using same key everywhere
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$SAME_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$SAME_KEY"
 ```
 
 ### 2. Rotate Secrets Regularly
@@ -246,7 +246,7 @@ gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$SAME_KEY"
 ```bash
 # Generate new OpenAI API key at https://platform.openai.com/api-keys
 # Then update secret:
-gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta --body "$NEW_KEY"
+gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core --body "$NEW_KEY"
 
 # Update security dashboard after rotation
 python3 scripts/update_security_dashboard.py
@@ -270,7 +270,7 @@ permissions:
 
 ```bash
 # Enable secret scanning and push protection
-gh api -X PATCH repos/dotlink-ops/Avidelta \
+gh api -X PATCH repos/dotlink-ops/nexus-core \
   -f security_and_analysis.secret_scanning.status=enabled \
   -f security_and_analysis.secret_scanning_push_protection.status=enabled
 ```
@@ -283,12 +283,12 @@ After setting up secrets:
 
 1. ✅ **Verify secrets exist:**
    ```bash
-   gh secret list --repo dotlink-ops/Avidelta
+   gh secret list --repo dotlink-ops/nexus-core
    ```
 
 2. ✅ **Run Secret Health check:**
    ```bash
-   gh workflow run secret-health.yml --repo dotlink-ops/Avidelta
+   gh workflow run secret-health.yml --repo dotlink-ops/nexus-core
    ```
 
 3. ✅ **Update security dashboard:**
@@ -299,7 +299,7 @@ After setting up secrets:
 4. ✅ **Test workflows:**
    ```bash
    # Test daily summary in demo mode
-   gh workflow run daily-summary.yml --repo dotlink-ops/Avidelta
+   gh workflow run daily-summary.yml --repo dotlink-ops/nexus-core
 
    # Test CI
    git commit --allow-empty -m "test: Trigger CI"
@@ -324,6 +324,6 @@ After setting up secrets:
 
 **Need help?** Check the troubleshooting section above or review workflow logs:
 ```bash
-gh run list --repo dotlink-ops/Avidelta --limit 10
-gh run view <RUN_ID> --repo dotlink-ops/Avidelta --log
+gh run list --repo dotlink-ops/nexus-core --limit 10
+gh run view <RUN_ID> --repo dotlink-ops/nexus-core --log
 ```

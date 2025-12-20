@@ -58,7 +58,7 @@ figma.ui.onmessage = async (msg) => {
   // =============================================================
   figma.notify("Fetching GitHub metadata…");
 
-  const avidelta = await githubRepoTree("dotlink-ops", "Avidelta");
+  const avidelta = await githubRepoTree("dotlink-ops", "nexus-core");
   const nextjs   = await githubRepoTree("dotlink-ops", "nextjs");
 
   const avideltaFiles = avidelta.tree.map(t => t.path);
@@ -120,7 +120,7 @@ figma.ui.onmessage = async (msg) => {
     frame.appendChild(group);
   }
 
-  addFileListToFrame(engine, "Avidelta Repo Structure", avideltaFiles);
+  addFileListToFrame(engine, "nexus-core Repo Structure", avideltaFiles);
   addFileListToFrame(api, "Next.js API Routes", nextFiles.filter(f => f.startsWith("app/api")));
 
   // =============================================================

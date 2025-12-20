@@ -1,4 +1,4 @@
-// Figma: Avidelta Design System → Landing / Marketing
+// Figma: nexus-core Design System → Landing / Marketing
 
 import DemoPreview from "./components/DemoPreview";
 import UnderTheHoodLive from "@/components/UnderTheHoodLive";

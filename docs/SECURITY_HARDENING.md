@@ -1,6 +1,6 @@
 # Security Hardening Guide
 
-Complete security checklist and hardening measures for the Avidelta automation infrastructure.
+Complete security checklist and hardening measures for the nexus-core automation infrastructure.
 
 ## Table of Contents
 
@@ -243,7 +243,7 @@ All three workflows now support Slack notifications on failure:
 2. Add to GitHub Secrets:
    ```bash
    gh secret set SLACK_WEBHOOK \
-     --repo dotlink-ops/Avidelta \
+     --repo dotlink-ops/nexus-core \
      --body "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
    ```
 
@@ -256,7 +256,7 @@ All three workflows now support Slack notifications on failure:
 **Notification format:**
 ```
 ⚠️ Secret Health Check Failed in production
-Repository: dotlink-ops/Avidelta
+Repository: dotlink-ops/nexus-core
 Workflow: [View Run]
 ```
 
@@ -335,7 +335,7 @@ Keeps logs available for compliance reviews.
   ```bash
   # Generate new key at: https://platform.openai.com/api-keys
   # Update GitHub secret:
-  gh secret set OPENAI_API_KEY --repo dotlink-ops/Avidelta
+  gh secret set OPENAI_API_KEY --repo dotlink-ops/nexus-core
   # Update environment secrets:
   # Settings → Environments → staging/production → Update secret
   # Test with secret-health workflow

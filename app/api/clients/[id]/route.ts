@@ -13,7 +13,7 @@ export async function GET(
   return NextResponse.json<StatusResponse>({
     ok: true,
     ready: true,
-    name: "Avidelta",
+    name: "nexus-core",
     version: "1.0.0",
     next: "clients/[id]/summary",
     node: process.version,

@@ -80,7 +80,7 @@ type GitHubWorkflowRunsResponse = {
 export async function GET() {
   try {
     const owner = 'dotlink-ops';
-    const repo = 'Avidelta';
+    const repo = 'nexus-core';
     const workflowId = 'daily-run.yml';
     
     // GitHub API endpoint for workflow runs - fetch last 7
@@ -88,7 +88,7 @@ export async function GET() {
     
     const headers: HeadersInit = {
       'Accept': 'application/vnd.github.v3+json',
-      'User-Agent': 'Avidelta-Automation-Status',
+      'User-Agent': 'nexus-core-Automation-Status',
     };
     
     // Add GitHub token if available (for higher rate limits)

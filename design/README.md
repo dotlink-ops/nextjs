@@ -1,4 +1,4 @@
-# Avidelta / Ariadne – Design Sources
+# nexus-core / Ariadne – Design Sources
 
 **Primary Figma file (live source of truth):**  
 <https://final-embed-54326008.figma.site/>

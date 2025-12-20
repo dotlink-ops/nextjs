@@ -40,7 +40,7 @@ jobs:
 
       - name: Commit updated dashboard
         run: |
-          git config --global user.name "Avidelta Security Bot"
+          git config --global user.name "nexus-core Security Bot"
           git config --global user.email "security-bot@avidelta.io"
           git add docs/security-audit-template.md
 
