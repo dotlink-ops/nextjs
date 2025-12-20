@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
   pre-commit:
@@ -67,7 +68,7 @@ jobs:
           fi
           payload=$(cat <<EOF
           {
-            "text": "✅ *${GITHUB_WORKFLOW}* passed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`).\nAll pre-commit hooks passed."
+            "text": "✅ *${GITHUB_WORKFLOW}* passed in \`${GITHUB_REPOSITORY}\` on branch \`${GITHUB_REF_NAME}\` (commit \`${GITHUB_SHA::7}\`)."
           }
           EOF
           )
