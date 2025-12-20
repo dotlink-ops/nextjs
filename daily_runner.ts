@@ -146,7 +146,7 @@ export async function main() {
   } catch (err) {
     // catastrophic outside step handling
     overallStatus = 'failed';
-    ac.runFailed(runId, `Catastrophic runner failure: ${err?.message || String(err)}`, { error: (err as Error)?.stack || null });
+    ac.runFailed(runId, `Catastrophic runner failure: ${err instanceof Error ? err.message : String(err)}`, { error: (err as Error)?.stack || null });
     process.exitCode = 4;
   } finally {
     try {
