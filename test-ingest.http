@@ -1,0 +1,22 @@
+### Test Knowledge Ingest Endpoint
+POST http://localhost:3000/api/knowledge/ingest
+Content-Type: application/json
+
+{
+  "client_id": "00000000-0000-0000-0000-000000000000",
+  "source": "meeting",
+  "text": "Client discussed timeline for automation deployment. Next steps include CRM sync.",
+  "metadata": {
+    "tags": ["meeting", "automation", "crm"],
+    "priority": "medium"
+  }
+}
+
+###
+GET http://localhost:3000/api/knowledge/ingest
+
+### Expected Response
+# {
+#   "item_id": "<uuid>",
+#   "status": "queued_for_processing"
+# }

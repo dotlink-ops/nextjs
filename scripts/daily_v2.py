@@ -30,6 +30,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
+# Import sales pipeline module
+try:
+    from lib.sales_pipeline import create_sales_pipeline_source, SalesPipelineData
+    HAS_SALES_PIPELINE = True
+except ImportError:
+    HAS_SALES_PIPELINE = False
+    logger.warning("⚠️  Sales pipeline module not available")
+
 
 def configure_logging() -> logging.Logger:
     """Configure structured logging with env-driven levels and run identifiers."""
@@ -76,6 +84,7 @@ try:
         Github,
         GithubException,
         RateLimitExceededException,
+        UnknownObjectException,
     )
     HAS_DEPS = True
 except ImportError:
@@ -213,7 +222,7 @@ class DailyAutomation:
             raise RuntimeError("OpenAI client initialization failed") from e
 
         try:
-            self.github_client = Github(self.config.github_token)
+            self.github_client = Github(auth=Github.Auth.Token(self.config.github_token))
             self.repo = self.github_client.get_repo(self.config.repo_name)
             logger.info(
                 "✓ API clients initialized successfully",
@@ -430,10 +439,10 @@ class DailyAutomation:
                     "labels": [label.name for label in issue.labels],
                 })
                 logger.info(f"  Created issue #{issue.number}: {issue.title}")
-            except RateLimitException as e:
+            except RateLimitExceededException as e:
                 logger.error(f"❌ GitHub rate limit reached while creating issue for: {item[:50]}...")
-                logger.error(f"   Rate limit resets at: {e.data.get('reset', 'unknown')}")
                 logger.error("   Wait before retrying or reduce request volume.")
+                logger.debug(f"GitHub rate limit details: {e}")
             except UnknownObjectException as e:
                 logger.error(f"❌ Repository or resource not found: {self.config.repo_name}")
                 logger.error("   Verify the GITHUB_REPO environment variable is correct.")
@@ -479,13 +488,64 @@ class DailyAutomation:
         )
         return self.repo.create_issue(title=title, body=body, labels=["automation", "daily-runner"])
 
-    def save_output(self, notes: List[str], summary: Dict[str, Any], issues: List[Dict[str, Any]]) -> Path:
+    def pull_sales_pipeline_data(self) -> Optional[Dict[str, Any]]:
+        """Pull sales pipeline data and save to output directory.
+        
+        Returns:
+            Sales pipeline data dict if successful, None otherwise.
+            
+        Side Effects:
+            - Pulls data from configured sales pipeline source
+            - Saves data to sales_pipeline.json
+            - Creates cache file for historical tracking
+        """
+        if not HAS_SALES_PIPELINE:
+            logger.warning("Sales pipeline module not available, skipping")
+            return None
+        
+        logger.info("📊 Pulling sales pipeline data...")
+        
+        try:
+            # Create sales pipeline data source
+            pipeline_source = create_sales_pipeline_source(
+                self.project_root,
+                demo_mode=self.demo_mode
+            )
+            
+            # Pull data
+            pipeline_data = pipeline_source.pull_data()
+            
+            # Save to main output file
+            pipeline_file = self.output_dir / "sales_pipeline.json"
+            pipeline_file.write_text(
+                json.dumps(pipeline_data.to_dict(), indent=2),
+                encoding="utf-8"
+            )
+            logger.info(f"  Saved: {pipeline_file}")
+            
+            # Save to cache
+            try:
+                cache_file = pipeline_source.save_to_cache(pipeline_data)
+                logger.debug(f"  Cached: {cache_file}")
+            except Exception as e:
+                logger.warning(f"Failed to cache pipeline data: {e}")
+            
+            logger.info("✓ Sales pipeline data pull complete")
+            return pipeline_data.to_dict()
+            
+        except Exception as e:
+            logger.error(f"Failed to pull sales pipeline data: {e}")
+            logger.debug("Sales pipeline pull error details:", exc_info=True)
+            return None
+
+    def save_output(self, notes: List[str], summary: Dict[str, Any], issues: List[Dict[str, Any]], pipeline_data: Optional[Dict[str, Any]] = None) -> Path:
         """Save the daily run's output to a timestamped JSON file.
 
         Args:
             notes: The raw notes that were processed.
             summary: The structured summary generated from notes.
             issues: List of GitHub issues created from action items.
+            pipeline_data: Optional sales pipeline data.
 
         Returns:
             The absolute Path to the saved output file.
@@ -513,17 +573,27 @@ class DailyAutomation:
                 "runner_version": "2.0.0",
                 "demo_mode": self.demo_mode,
                 "notes_count": len(notes),
+                "sales_pipeline_enabled": pipeline_data is not None,
             }
         }
+        
+        # Add sales pipeline summary if available
+        if pipeline_data:
+            output_data["sales_pipeline_summary"] = {
+                "total_leads": pipeline_data.get("total_leads", 0),
+                "total_value": pipeline_data.get("total_value", 0),
+                "weighted_value": pipeline_data.get("weighted_value", 0),
+                "timestamp": pipeline_data.get("timestamp", ""),
+            }
 
         # Save main output
         output_file = self.output_dir / "daily_summary.json"
-        output_file.write_text(json.dumps(output_data, indent=2), encoding="utf-8")
+        output_file.write_text(json.dumps(output_data, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info(f"  Saved: {output_file}")
 
         # Save audit log
         log_file = self.output_dir / f"audit_{timestamp.strftime('%Y%m%d_%H%M%S')}.json"
-        log_file.write_text(json.dumps(output_data, indent=2), encoding="utf-8")
+        log_file.write_text(json.dumps(output_data, indent=2, ensure_ascii=False), encoding="utf-8")
         logger.info(f"  Saved: {log_file}")
 
         logger.info("✓ Output saved successfully")
@@ -535,8 +605,9 @@ class DailyAutomation:
         Steps performed:
             1. Ingest notes from configured source.
             2. Generate summary (using OpenAI or demo fallback).
-            3. Create GitHub issues from action items (skipped in demo mode).
-            4. Save outputs to disk.
+            3. Pull sales pipeline data (new feature).
+            4. Create GitHub issues from action items (skipped in demo mode).
+            5. Save outputs to disk.
 
         Returns:
             0 on success, 1 on failure.
@@ -558,8 +629,12 @@ class DailyAutomation:
             logger.info(f"Ingested {len(notes)} notes")
 
             summary = self._build_summary(notes)
+            
+            # Pull sales pipeline data
+            pipeline_data = self.pull_sales_pipeline_data()
+            
             issues = self._handle_issues(summary)
-            output_file = self.save_output(notes, summary, issues)
+            output_file = self.save_output(notes, summary, issues, pipeline_data)
 
             duration = (datetime.now(timezone.utc) - start_time).total_seconds()
             self._log_run_footer(duration, len(notes), len(issues), output_file)
