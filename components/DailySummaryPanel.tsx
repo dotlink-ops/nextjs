@@ -2,18 +2,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { DailySummaryResponse } from "@/app/api/types";
 
-type DailySummary = {
-  date: string;
-  repo: string;
-  summary_bullets: string[];
-  action_items: string[];
-  raw_text: string;
-  created_at: string;
-};
+type DailySummarySuccess = Extract<DailySummaryResponse, { status: "ok" }>;
 
 export function DailySummaryPanel() {
-  const [data, setData] = useState<DailySummary | null>(null);
+  const [data, setData] = useState<DailySummarySuccess | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -21,7 +15,12 @@ export function DailySummaryPanel() {
       try {
         const res = await fetch("/api/daily-summary");
         if (!res.ok) throw new Error("Failed to fetch");
-        const json = await res.json();
+        const json: DailySummaryResponse = await res.json();
+        if (json.status !== "ok") {
+          setError(json.message ?? "Could not load daily summary");
+          setData(null);
+          return;
+        }
         setData(json);
       } catch (err) {
         console.error(err);

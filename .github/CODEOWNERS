@@ -1,27 +1,91 @@
-# CODEOWNERS file for dotlink-ops/Avidelta
-# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# CODEOWNERS for Avidelta Repository
+#
+# This file defines code ownership aligned with the dot-rail branch protection ruleset.
+# Code owners are automatically requested for review when someone opens a PR that
+# modifies files in their defined paths.
+#
+# Learn more: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-# Default owner for everything in the repo
+# =============================================================================
+# AUTOMATION & INFRASTRUCTURE (Critical Paths - dot-rail ruleset)
+# =============================================================================
+
+# Python automation scripts - core business logic
+# Includes daily_v2.py, update_security_dashboard.py, csp-reporter.js, and all modules
+scripts/                    @dotlink-ops
+
+# Python library modules - shared automation logic
+python/                     @dotlink-ops
+
+# GitHub Actions workflows - CI/CD and automation orchestration
+# Any change to workflows affects production automation runs
+.github/workflows/          @dotlink-ops
+
+# Actions configuration
+.github/actions/            @dotlink-ops
+
+# =============================================================================
+# SECURITY & CONFIGURATION
+# =============================================================================
+
+# Security documentation - requires security review
+docs/SECURITY*.md           @dotlink-ops
+docs/PRE_COMMIT_GUIDE.md    @dotlink-ops
+docs/BRANCH_PROTECTION.md   @dotlink-ops
+SECURITY_COMPLIANCE.md      @dotlink-ops
+
+# Environment configuration templates - contain secret keys structure
+.env.example                @dotlink-ops
+.env.local.example          @dotlink-ops
+
+# Configuration files that may affect security
+*.config.js                 @dotlink-ops
+*.config.ts                 @dotlink-ops
+*.config.mjs                @dotlink-ops
+
+# Branch protection and code ownership itself
+.github/CODEOWNERS          @dotlink-ops
+
+# =============================================================================
+# CRITICAL DOCUMENTATION
+# =============================================================================
+
+# Architecture and setup docs - define system behavior
+ARCHITECTURE.md             @dotlink-ops
+SETUP.md                    @dotlink-ops
+TASK_HANDOFF.md             @dotlink-ops
+
+# =============================================================================
+# API & SENSITIVE DATA HANDLING
+# =============================================================================
+
+# API routes - may handle secrets or sensitive operations
+app/api/                    @dotlink-ops
+
+# =============================================================================
+# DEFAULT FALLBACK
+# =============================================================================
+
+# Everything else in the repo (lower priority)
 * @dotlink-ops
 
-# Workflow files require security review
-.github/workflows/** @dotlink-ops
-.github/workflows/*.yml @dotlink-ops
-
-# Actions configuration requires review
-.github/actions/** @dotlink-ops
-
-# Security-sensitive configuration files
-.env.example @dotlink-ops
-*.config.js @dotlink-ops
-*.config.ts @dotlink-ops
-
-# Documentation about secrets and security
-docs/SECRETS_MANAGEMENT.md @dotlink-ops
-
-# Python automation scripts (access to secrets)
-scripts/*.py @dotlink-ops
-scripts/requirements.txt @dotlink-ops
-
-# API routes (may handle sensitive data)
-app/api/** @dotlink-ops
+# =============================================================================
+# NOTES
+# =============================================================================
+#
+# Review Requirements:
+# - All changes to critical paths above require approval from @dotlink-ops
+# - Enforced by dot-rail branch ruleset for dot-rail and dot-rail/* branches
+# - Protects automation infrastructure, security configs, and workflows
+#
+# To bypass (highly restricted):
+# - Repository administrators only
+# - Explicitly defined users in ruleset bypass list
+#
+# Priority Order:
+# - Most specific paths are evaluated first (scripts/, .github/workflows/, python/)
+# - Fallback to default owner (*) for unmatched paths
+#
+# Contact:
+# - Access requests or questions: Open a GitHub issue
+# - Urgent automation changes: Contact @dotlink-ops directly

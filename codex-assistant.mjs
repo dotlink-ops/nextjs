@@ -1,7 +1,7 @@
 // Avidelta Repo Copilot config
 // Guides AI/Copilot agents when debugging or improving this repo.
 
-export default {
+const config = {
   name: "Avidelta Repo Copilot",
   description: "AI assistant for debugging and improving the automation + Next.js portfolio stack.",
   model: "gpt-4-turbo",
@@ -52,3 +52,5 @@ Priorities:
     validate: "bash scripts/validate.sh",
   },
 };
+
+export default config;
