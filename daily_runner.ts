@@ -40,7 +40,7 @@ export async function runSteps(steps: Step[], runId?: string) {
     return { status: 'success', runId: id };
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
-    ac.runFailed(id, `Catastrophic runner failure: ${message}`, { error: err?.stack || null });
+    ac.runFailed(id, `Catastrophic runner failure: ${message}`, { error: (err as Error)?.stack || null });
     throw err;
   }
 }
@@ -146,14 +146,14 @@ export async function main() {
   } catch (err) {
     // catastrophic outside step handling
     overallStatus = 'failed';
-    ac.runFailed(runId, `Catastrophic runner failure: ${err?.message || String(err)}`, { error: err?.stack || null });
+    ac.runFailed(runId, `Catastrophic runner failure: ${err?.message || String(err)}`, { error: (err as Error)?.stack || null });
     process.exitCode = 4;
   } finally {
     try {
       await runMgr.finalize(overallStatus);
     } catch (e) {
       // If finalization fails, emit a last-ditch log but do not throw
-      try { ac.runFailed(runId, `Finalization write failed: ${String(e)}`, { error: e?.stack || null }); } catch (ee) {}
+      try { ac.runFailed(runId, `Finalization write failed: ${String(e)}`, { error: (e as Error)?.stack || null }); } catch (ee) {}
     }
     // Use exit code set above
     process.exit(process.exitCode || 0);
