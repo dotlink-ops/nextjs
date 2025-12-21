@@ -49,7 +49,8 @@ class DailySummary:
         Returns:
             DailySummary instance
         """
-        timestamp = datetime.now(datetime.now().astimezone().tzinfo)
+        from datetime import timezone
+        timestamp = datetime.now(timezone.utc)
         
         return cls(
             date=timestamp.strftime("%Y-%m-%d"),
@@ -174,4 +175,50 @@ class AuditLog:
             "duration_seconds": self.duration_seconds,
             "status": self.status,
             "errors": self.errors,
+        }
+
+
+@dataclass
+class SalesPipelineData:
+    """Sales pipeline data structure."""
+    
+    timestamp: str
+    source: str
+    total_pipeline_value: int
+    deals_count: int
+    deals: List[Dict[str, Any]]
+    metrics: Dict[str, Any]
+    top_opportunities: List[Dict[str, Any]]
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "SalesPipelineData":
+        """
+        Create SalesPipelineData from a dictionary.
+        
+        Args:
+            data: Dictionary with pipeline data
+        
+        Returns:
+            SalesPipelineData instance
+        """
+        return cls(
+            timestamp=data.get("timestamp", ""),
+            source=data.get("source", "unknown"),
+            total_pipeline_value=data.get("total_pipeline_value", 0),
+            deals_count=data.get("deals_count", 0),
+            deals=data.get("deals", []),
+            metrics=data.get("metrics", {}),
+            top_opportunities=data.get("top_opportunities", [])
+        )
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
+        return {
+            "timestamp": self.timestamp,
+            "source": self.source,
+            "total_pipeline_value": self.total_pipeline_value,
+            "deals_count": self.deals_count,
+            "deals": self.deals,
+            "metrics": self.metrics,
+            "top_opportunities": self.top_opportunities,
         }

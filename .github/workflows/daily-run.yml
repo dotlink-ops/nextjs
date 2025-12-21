@@ -1,12 +1,13 @@
-name: Daily Automation Runner
+name: Daily Automation Run
 
 on:
   schedule:
-    - cron: "0 13 * * *"  # runs daily at 5 AM PT
+    # Runs daily at 14:00 UTC (real run)
+    - cron: "0 14 * * *"
   workflow_dispatch:
     inputs:
       demo_mode:
-        description: 'Run in demo mode (no API calls)'
+        description: 'Run in demo mode (no external API calls)'
         required: false
         default: 'false'
         type: choice
@@ -14,93 +15,453 @@ on:
           - 'true'
           - 'false'
 
+permissions: {}
+
 jobs:
-  daily-automation:
+  daily-run:
+    name: Daily Automation Run
     runs-on: ubuntu-latest
-    
     permissions:
       contents: write
-      issues: write
-      pull-requests: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          cache: 'pip'
-      
-      - name: Install dependencies
+          python-version: '3.11'
+
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r scripts/requirements.txt
-      
+
       - name: Run daily automation
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          REPO_NAME: ${{ github.repository }}
+          REPO_NAME: dotlink-ops/Avidelta
           OUTPUT_DIR: ./output
           NOTES_SOURCE: ./output/notes
         run: |
-          if [ "${{ github.event.inputs.demo_mode }}" = "true" ]; then
-            python scripts/daily_v2.py --demo
+          # Normalize input (workflow_dispatch inputs are empty for scheduled runs)
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ "${DEMO_INPUT}" = "true" ]; then
+            echo "Running in demo mode (workflow input demo_mode=true)"
+            export DEMO_MODE=true
+            python3 scripts/daily_v2.py --demo
           else
-            python scripts/daily_v2.py
+            echo "Running in real mode (demo_mode not set or false)"
+            python3 scripts/daily_v2.py
           fi
-      
-      - name: Upload daily summary artifact
-        uses: actions/upload-artifact@v5
+
+      - name: Verify output
         if: always()
+        run: |
+          mkdir -p output/backups
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ -f output/daily_summary.json ]; then
+            if [ "${DEMO_INPUT}" = "true" ]; then
+              TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+              cp output/daily_summary.json output/backups/daily_summary_demo_${TIMESTAMP}.json
+              echo "✓ Demo run: copied daily_summary.json to output/backups/daily_summary_demo_${TIMESTAMP}.json"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            else
+              mkdir -p public/data
+              cp output/daily_summary.json public/data/daily_summary.json
+              echo "✓ Copied daily_summary.json to public/data/"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            fi
+          else
+            echo "⚠️  output/daily_summary.json not found"
+          fi
+
+      - name: Commit and push results
+        if: success() && (github.event.inputs.demo_mode != 'true')
+        run: |
+          # If the generated summary indicates demo_mode=true, skip committing.
+          if [ -f output/daily_summary.json ] && [ "$(jq -r '.demo_mode // \"true\"' output/daily_summary.json 2>/dev/null)" = "true" ]; then
+            echo "Demo mode output; skipping commit."
+            exit 0
+          fi
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/daily_summary.json output/daily_summary.json || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: daily run output - $(date -u +"%Y-%m-%d %H:%M UTC") [skip ci]"
+            git push || echo "Push failed (perhaps protected branch)"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
         with:
           name: daily-summary-${{ github.run_number }}
           path: |
             output/daily_summary.json
             output/audit_*.json
-          retention-days: 90
-      
+          retention-days: 30
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Daily Automation" >> $GITHUB_STEP_SUMMARY
+          if [ -f output/daily_summary.json ] && jq empty output/daily_summary.json >/dev/null 2>&1; then
+            echo "- **Date:** $(jq -r '.date // \"unknown\"' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **Issues Created:** $(jq -r '.issues_created // 0' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **Demo Mode:** $(jq -r '.demo_mode // \"unknown\"' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- ❌ No valid daily summary generated (missing or invalid JSON)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+name: Daily Automation Run
+
+on:
+  schedule:
+    # Runs daily at 14:00 UTC (real run)
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      demo_mode:
+        description: 'Run in demo mode (no external API calls)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions: {}
+
+jobs:
+  daily-run:
+    name: Daily Automation Run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+
+      - name: Run daily automation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: dotlink-ops/Avidelta
+          OUTPUT_DIR: ./output
+          NOTES_SOURCE: ./output/notes
+        run: |
+          # Normalize input (workflow_dispatch inputs are empty for scheduled runs)
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ "${DEMO_INPUT}" = "true" ]; then
+            echo "Running in demo mode (workflow input demo_mode=true)"
+            export DEMO_MODE=true
+            python3 scripts/daily_v2.py --demo
+          else
+            echo "Running in real mode (demo_mode not set or false)"
+            python3 scripts/daily_v2.py
+          fi
+
+      - name: Verify output
+        if: always()
+        run: |
+          mkdir -p output/backups
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ -f output/daily_summary.json ]; then
+            if [ "${DEMO_INPUT}" = "true" ]; then
+              TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+              cp output/daily_summary.json output/backups/daily_summary_demo_${TIMESTAMP}.json
+              echo "✓ Demo run: copied daily_summary.json to output/backups/daily_summary_demo_${TIMESTAMP}.json"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            else
+              mkdir -p public/data
+              cp output/daily_summary.json public/data/daily_summary.json
+              echo "✓ Copied daily_summary.json to public/data/"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            fi
+          else
+            echo "⚠️  output/daily_summary.json not found"
+          fi
+
       - name: Commit and push results
-        if: success()
+        if: success() && (github.event.inputs.demo_mode != 'true')
+        run: |
+          # If the generated summary indicates demo_mode=true, skip committing.
+          if [ -f output/daily_summary.json ] && [ "$(jq -r '.demo_mode // "true"' output/daily_summary.json 2>/dev/null)" = "true" ]; then
+            echo "Demo mode output; skipping commit."
+            exit 0
+          fi
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/daily_summary.json output/daily_summary.json || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: daily run output - $(date -u +"%Y-%m-%d %H:%M UTC") [skip ci]"
+            git push || echo "Push failed (perhaps protected branch)"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: daily-summary-${{ github.run_number }}
+          path: |
+            output/daily_summary.json
+            output/audit_*.json
+          retention-days: 30
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Daily Automation" >> $GITHUB_STEP_SUMMARY
+          if [ -f output/daily_summary.json ] && jq empty output/daily_summary.json >/dev/null 2>&1; then
+            echo "- **Date:** $(jq -r '.date // \"unknown\"' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **Issues Created:** $(jq -r '.issues_created // 0' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **Demo Mode:** $(jq -r '.demo_mode // \"unknown\"' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "- ❌ No valid daily summary generated (missing or invalid JSON)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+name: Daily Automation Run
+
+on:
+  schedule:
+    # Runs daily at 14:00 UTC (real run)
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      demo_mode:
+        description: 'Run in demo mode (no external API calls)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions: {}
+
+jobs:
+  daily-run:
+    name: Daily Automation Run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+
+      - name: Run daily automation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: dotlink-ops/Avidelta
+          OUTPUT_DIR: ./output
+          NOTES_SOURCE: ./output/notes
+        run: |
+          # Normalize input (workflow_dispatch inputs are empty for scheduled runs)
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ "${DEMO_INPUT}" = "true" ]; then
+            echo "Running in demo mode (workflow input demo_mode=true)"
+            export DEMO_MODE=true
+            python3 scripts/daily_v2.py --demo
+          else
+            echo "Running in real mode (demo_mode not set or false)"
+            python3 scripts/daily_v2.py
+          fi
+
+      - name: Verify output
+        if: always()
+        run: |
+          mkdir -p output/backups
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ -f output/daily_summary.json ]; then
+            if [ "${DEMO_INPUT}" = "true" ]; then
+              TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+              cp output/daily_summary.json output/backups/daily_summary_demo_${TIMESTAMP}.json
+              echo "✓ Demo run: copied daily_summary.json to output/backups/daily_summary_demo_${TIMESTAMP}.json"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            else
+              mkdir -p public/data
+              cp output/daily_summary.json public/data/daily_summary.json
+              echo "✓ Copied daily_summary.json to public/data/"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            fi
+          else
+            echo "⚠️  output/daily_summary.json not found"
+          fi
+
+      - name: Commit and push results
+        if: success() && (github.event.inputs.demo_mode != 'true')
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add output/daily_summary.json output/audit_*.json
-          git diff --staged --quiet || git commit -m "chore: daily automation run [skip ci]"
-          git push || echo "No changes to push"
-      
-      - name: Create summary
+          git add public/data/daily_summary.json output/daily_summary.json || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: daily run output - $(date -u +"%Y-%m-%d %H:%M UTC") [skip ci]"
+            git push || echo "Push failed (perhaps protected branch)"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: daily-summary-${{ github.run_number }}
+          path: |
+            output/daily_summary.json
+            output/audit_*.json
+          retention-days: 30
+
+      - name: Job summary
         if: always()
         run: |
-          echo "## 📊 Daily Automation Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          if [ -f output/daily_summary.json ]; then
-            echo "✅ Daily summary generated successfully" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Date:** $(jq -r '.date' output/daily_summary.json)" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Key Highlights:**" >> $GITHUB_STEP_SUMMARY
-            jq -r '.summary_bullets[] | "- " + .' output/daily_summary.json >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Action Items:**" >> $GITHUB_STEP_SUMMARY
-            jq -r '.action_items[] | "- " + .' output/daily_summary.json >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Issues Created:** $(jq -r '.issues_created' output/daily_summary.json)" >> $GITHUB_STEP_SUMMARY
+          echo "## Daily Automation" >> $GITHUB_STEP_SUMMARY
+          if [ -f output/daily_summary.json ] && jq empty output/daily_summary.json >/dev/null 2>&1; then
+            echo "- **Date:** $(jq -r '.date // \"unknown\"' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **Issues Created:** $(jq -r '.issues_created // 0' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
+            echo "- **Demo Mode:** $(jq -r '.demo_mode // \"unknown\"' output/daily_summary.json)" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "❌ Daily summary not generated" >> $GITHUB_STEP_SUMMARY
+            echo "- ❌ No valid daily summary generated (missing or invalid JSON)" >> "$GITHUB_STEP_SUMMARY"
           fi
-      
-      - name: Notify on failure
-        if: failure()
-        uses: actions/github-script@v8
+name: Daily Automation Run
+
+on:
+  schedule:
+    # Runs daily at 14:00 UTC (real run)
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+    inputs:
+      demo_mode:
+        description: 'Run in demo mode (no external API calls)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+permissions: {}
+
+jobs:
+  daily-run:
+    name: Daily Automation Run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
         with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: '🚨 Daily Automation Failed',
-              body: `Daily automation run failed on ${new Date().toISOString().split('T')[0]}\n\n**Workflow Run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-              labels: ['automation', 'bug', 'high-priority']
-            })
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r scripts/requirements.txt
+
+      - name: Run daily automation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_NAME: dotlink-ops/Avidelta
+          OUTPUT_DIR: ./output
+          NOTES_SOURCE: ./output/notes
+        run: |
+          # Normalize input (workflow_dispatch inputs are empty for scheduled runs)
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ "${DEMO_INPUT}" = "true" ]; then
+            echo "Running in demo mode (workflow input demo_mode=true)"
+            export DEMO_MODE=true
+            python3 scripts/daily_v2.py --demo
+          else
+            echo "Running in real mode (demo_mode not set or false)"
+            python3 scripts/daily_v2.py
+          fi
+
+      - name: Verify output
+        if: always()
+        run: |
+          mkdir -p output/backups
+          # Normalize input (empty for scheduled runs)
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ -f output/daily_summary.json ]; then
+            if [ "${DEMO_INPUT}" = "true" ]; then
+              # Demo runs: do not copy to public/data or commit. Save to backups
+              TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+              mkdir -p output/backups
+              cp output/daily_summary.json output/backups/daily_summary_demo_${TIMESTAMP}.json
+              echo "✓ Demo run: copied daily_summary.json to output/backups/daily_summary_demo_${TIMESTAMP}.json"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            else
+              mkdir -p public/data
+              cp output/daily_summary.json public/data/daily_summary.json
+              echo "✓ Copied daily_summary.json to public/data/"
+              jq -r '.date, .metadata.runner_version' output/daily_summary.json || true
+            fi
+          else
+            echo "⚠️  output/daily_summary.json not found"
+          fi
+
+      - name: Commit and push results
+        if: success() && (github.event.inputs.demo_mode != 'true')
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/data/daily_summary.json output/daily_summary.json || true
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: daily run output - $(date -u +"%Y-%m-%d %H:%M UTC") [skip ci]"
+            git push || echo "Push failed (perhaps protected branch)"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: daily-summary-${{ github.run_number }}
+          path: |
+            output/daily_summary.json
+            output/audit_*.json
+          retention-days: 30
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Daily Automation" >> $GITHUB_STEP_SUMMARY
+          if [ -f output/daily_summary.json ]; then
+            echo "- Date: $(jq -r '.date' output/daily_summary.json)" >> $GITHUB_STEP_SUMMARY
+            echo "- Issues Created: $(jq -r '.issues_created' output/daily_summary.json)" >> $GITHUB_STEP_SUMMARY
+          fi

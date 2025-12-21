@@ -4,7 +4,16 @@ on:
   schedule:
     # Runs daily at 1:00 PM UTC (5:00 AM PT / 8:00 AM ET)
     - cron: "0 13 * * *"
-  workflow_dispatch:  # Allow manual triggering
+  workflow_dispatch:
+    inputs:
+      demo_mode:
+        description: 'Run in demo mode (no external API calls)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 # Least-privilege permissions (only what's needed)
 permissions:
@@ -62,9 +71,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO_NAME: dotlink-ops/Avidelta
         run: |
-          python3 scripts/daily_v2.py
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ "${DEMO_INPUT}" = "true" ]; then
+            echo "Running in demo mode (workflow input demo_mode=true)"
+            python3 scripts/daily_v2.py --demo
+          else
+            echo "Running in real mode (demo_mode not set or false)"
+            python3 scripts/daily_v2.py
+          fi
 
-      - name: Verify output was created
+      - name: Verify output was created and enforce demo flag
         run: |
           if [ ! -f output/daily_summary.json ]; then
             echo "Error: daily_summary.json not created"
@@ -73,11 +89,46 @@ jobs:
           echo "✓ daily_summary.json created successfully"
           cat output/daily_summary.json | head -20
 
-      - name: Copy to public data directory
+          # Record the workflow input for demo_mode into a small file for auditing
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ -z "${DEMO_INPUT}" ]; then
+            DEMO_INPUT='false'
+          fi
+          echo "${DEMO_INPUT}" > output/daily_summary.json.demo_mode
+
+          # Verify the generated JSON's metadata.demo_mode matches the workflow input
+          ACTUAL=$(jq -r '.metadata.demo_mode // .demo_mode' output/daily_summary.json || echo "false")
+          # Normalize actual to 'true' or 'false'
+          if [ "${ACTUAL}" = "true" ] || [ "${ACTUAL}" = "True" ]; then
+            ACTUAL_NORM='true'
+          else
+            ACTUAL_NORM='false'
+          fi
+
+          echo "Workflow input demo_mode=${DEMO_INPUT}, output metadata.demo_mode=${ACTUAL_NORM}"
+          if [ "${DEMO_INPUT}" != "${ACTUAL_NORM}" ]; then
+            echo "ERROR: demo_mode mismatch between workflow input and generated output"
+            echo "  Workflow input: ${DEMO_INPUT}"
+            echo "  Output metadata.demo_mode: ${ACTUAL_NORM}"
+            exit 1
+          fi
+
+      - name: Copy to public data directory or backup demo output
         run: |
-          mkdir -p public/data
-          cp output/daily_summary.json public/data/daily_summary.json
-          echo "✓ Copied to public/data/"
+          DEMO_INPUT="${{ github.event.inputs.demo_mode }}"
+          if [ -z "${DEMO_INPUT}" ]; then
+            DEMO_INPUT='false'
+          fi
+          mkdir -p output/backups
+          if [ "${DEMO_INPUT}" = "true" ]; then
+            TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+            cp output/daily_summary.json output/backups/daily_summary_demo_${TIMESTAMP}.json
+            echo "✓ Demo run: backed up daily_summary.json to output/backups/daily_summary_demo_${TIMESTAMP}.json"
+          else
+            mkdir -p public/data
+            cp output/daily_summary.json public/data/daily_summary.json
+            echo "✓ Copied to public/data/"
+          fi
 
       - name: Commit and push changes
         run: |

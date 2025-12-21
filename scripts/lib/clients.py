@@ -272,3 +272,202 @@ def create_github_client(project_root: Path) -> GitHubClient:
         )
     
     return GitHubClient(token, repo_name)
+
+
+class SalesPipelineClient:
+    """
+    Client for pulling sales pipeline data from various sources.
+    
+    This is a generic client that can be extended to support multiple
+    CRM systems (Salesforce, HubSpot, Pipedrive, etc.) or custom data sources.
+    """
+    
+    def __init__(self, source: str = "demo", api_key: Optional[str] = None) -> None:
+        """
+        Initialize sales pipeline client.
+        
+        Args:
+            source: Data source type ('demo', 'salesforce', 'hubspot', 'csv', etc.)
+            api_key: Optional API key for authenticated sources
+        """
+        self.source = source
+        self.api_key = api_key
+        logger.info(f"✓ SalesPipelineClient initialized (source: {source})")
+    
+    def pull_pipeline_data(self, demo_mode: bool = False) -> Dict[str, Any]:
+        """
+        Pull sales pipeline data from configured source.
+        
+        Args:
+            demo_mode: If True, return demo data instead of making real API calls
+        
+        Returns:
+            Dictionary containing pipeline data with deals, contacts, and metrics
+        """
+        if demo_mode or self.source == "demo":
+            return self._generate_demo_data()
+        
+        # Extensible: Add support for different sources
+        if self.source == "salesforce":
+            return self._pull_from_salesforce()
+        elif self.source == "hubspot":
+            return self._pull_from_hubspot()
+        elif self.source == "csv":
+            return self._pull_from_csv()
+        else:
+            logger.warning(f"Unknown source '{self.source}', using demo data")
+            return self._generate_demo_data()
+    
+    def _generate_demo_data(self) -> Dict[str, Any]:
+        """Generate realistic demo sales pipeline data."""
+        from datetime import datetime, timezone, timedelta
+        
+        now = datetime.now(timezone.utc)
+        
+        return {
+            "timestamp": now.isoformat(),
+            "source": "demo",
+            "total_pipeline_value": 500000,
+            "deals_count": 8,
+            "deals": [
+                {
+                    "id": "DEAL-001",
+                    "name": "Enterprise Platform Migration - Acme Corp",
+                    "value": 85000,
+                    "stage": "Proposal Sent",
+                    "probability": 60,
+                    "close_date": (now + timedelta(days=15)).strftime("%Y-%m-%d"),
+                    "contact": "Sarah Johnson",
+                    "company": "Acme Corp"
+                },
+                {
+                    "id": "DEAL-002",
+                    "name": "API Integration Services - TechStart Inc",
+                    "value": 45000,
+                    "stage": "Negotiation",
+                    "probability": 75,
+                    "close_date": (now + timedelta(days=8)).strftime("%Y-%m-%d"),
+                    "contact": "Mike Chen",
+                    "company": "TechStart Inc"
+                },
+                {
+                    "id": "DEAL-003",
+                    "name": "Automation Consulting - Global Solutions",
+                    "value": 120000,
+                    "stage": "Discovery",
+                    "probability": 30,
+                    "close_date": (now + timedelta(days=45)).strftime("%Y-%m-%d"),
+                    "contact": "Emma Davis",
+                    "company": "Global Solutions"
+                },
+                {
+                    "id": "DEAL-004",
+                    "name": "Data Pipeline Setup - StartupXYZ",
+                    "value": 15000,
+                    "stage": "Closed Won",
+                    "probability": 100,
+                    "close_date": (now - timedelta(days=3)).strftime("%Y-%m-%d"),
+                    "contact": "James Wilson",
+                    "company": "StartupXYZ"
+                },
+                {
+                    "id": "DEAL-005",
+                    "name": "Security Audit - FinTech Partners",
+                    "value": 20000,
+                    "stage": "Proposal Sent",
+                    "probability": 50,
+                    "close_date": (now + timedelta(days=20)).strftime("%Y-%m-%d"),
+                    "contact": "Lisa Brown",
+                    "company": "FinTech Partners"
+                },
+                {
+                    "id": "DEAL-006",
+                    "name": "Cloud Infrastructure Migration - RetailCo",
+                    "value": 95000,
+                    "stage": "Discovery",
+                    "probability": 40,
+                    "close_date": (now + timedelta(days=35)).strftime("%Y-%m-%d"),
+                    "contact": "David Martinez",
+                    "company": "RetailCo"
+                },
+                {
+                    "id": "DEAL-007",
+                    "name": "DevOps Transformation - MediaGroup",
+                    "value": 65000,
+                    "stage": "Negotiation",
+                    "probability": 70,
+                    "close_date": (now + timedelta(days=12)).strftime("%Y-%m-%d"),
+                    "contact": "Rachel Kim",
+                    "company": "MediaGroup"
+                },
+                {
+                    "id": "DEAL-008",
+                    "name": "AI Implementation - HealthTech",
+                    "value": 55000,
+                    "stage": "Proposal Sent",
+                    "probability": 55,
+                    "close_date": (now + timedelta(days=18)).strftime("%Y-%m-%d"),
+                    "contact": "Tom Anderson",
+                    "company": "HealthTech"
+                }
+            ],
+            "metrics": {
+                "active_deals": 7,
+                "closed_won": 1,
+                "avg_deal_size": 62500,
+                "weighted_pipeline": 296250,  # Sum of (value * probability)
+                "stages": {
+                    "Discovery": 2,
+                    "Proposal Sent": 3,
+                    "Negotiation": 2,
+                    "Closed Won": 1
+                }
+            },
+            "top_opportunities": [
+                {"name": "Automation Consulting", "value": 120000},
+                {"name": "Cloud Infrastructure Migration", "value": 95000},
+                {"name": "Enterprise Platform Migration", "value": 85000}
+            ]
+        }
+    
+    def _pull_from_salesforce(self) -> Dict[str, Any]:
+        """Pull data from Salesforce API (placeholder for future implementation)."""
+        logger.warning("Salesforce integration not yet implemented, using demo data")
+        return self._generate_demo_data()
+    
+    def _pull_from_hubspot(self) -> Dict[str, Any]:
+        """Pull data from HubSpot API (placeholder for future implementation)."""
+        logger.warning("HubSpot integration not yet implemented, using demo data")
+        return self._generate_demo_data()
+    
+    def _pull_from_csv(self) -> Dict[str, Any]:
+        """Pull data from CSV file (placeholder for future implementation)."""
+        logger.warning("CSV integration not yet implemented, using demo data")
+        return self._generate_demo_data()
+
+
+def create_sales_pipeline_client(project_root: Path, demo_mode: bool = False) -> SalesPipelineClient:
+    """
+    Create a sales pipeline client with environment validation.
+    
+    Args:
+        project_root: Root directory of the project
+        demo_mode: If True, use demo data source
+    
+    Returns:
+        Initialized SalesPipelineClient
+    """
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(project_root / ".env.local")
+    except ImportError:
+        pass
+    
+    if demo_mode:
+        return SalesPipelineClient(source="demo")
+    
+    # Get configured source from environment
+    source = os.getenv("SALES_PIPELINE_SOURCE", "demo")
+    api_key = os.getenv("SALES_PIPELINE_API_KEY")
+    
+    return SalesPipelineClient(source=source, api_key=api_key)

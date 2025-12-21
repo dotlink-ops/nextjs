@@ -1,0 +1,71 @@
+{
+  "timestamp": "2025-12-20T18:44:43.120644+00:00",
+  "total_leads": 5,
+  "total_value": 462000.0,
+  "weighted_value": 254500.0,
+  "stage_breakdown": {
+    "Qualification": 2,
+    "Proposal": 1,
+    "Negotiation": 1,
+    "Closed Won": 1
+  },
+  "leads": [
+    {
+      "id": "lead-001",
+      "name": "Enterprise Integration Project",
+      "company": "TechCorp Solutions",
+      "stage": "Qualification",
+      "value": 150000.0,
+      "probability": 0.3,
+      "owner": "Sales Rep A",
+      "created_at": "2025-11-15T10:00:00Z",
+      "updated_at": "2025-12-09T14:30:00Z"
+    },
+    {
+      "id": "lead-002",
+      "name": "Automation Platform Migration",
+      "company": "FinTech Innovators",
+      "stage": "Proposal",
+      "value": 85000.0,
+      "probability": 0.5,
+      "owner": "Sales Rep B",
+      "created_at": "2025-11-20T09:15:00Z",
+      "updated_at": "2025-12-10T11:20:00Z"
+    },
+    {
+      "id": "lead-003",
+      "name": "API Integration Services",
+      "company": "RetailHub Inc",
+      "stage": "Negotiation",
+      "value": 45000.0,
+      "probability": 0.7,
+      "owner": "Sales Rep A",
+      "created_at": "2025-11-25T13:45:00Z",
+      "updated_at": "2025-12-10T16:00:00Z"
+    },
+    {
+      "id": "lead-004",
+      "name": "Data Pipeline Optimization",
+      "company": "Analytics Pro",
+      "stage": "Qualification",
+      "value": 62000.0,
+      "probability": 0.25,
+      "owner": "Sales Rep C",
+      "created_at": "2025-12-01T08:30:00Z",
+      "updated_at": "2025-12-08T10:45:00Z"
+    },
+    {
+      "id": "lead-005",
+      "name": "Cloud Infrastructure Setup",
+      "company": "StartupXYZ",
+      "stage": "Closed Won",
+      "value": 120000.0,
+      "probability": 1.0,
+      "owner": "Sales Rep B",
+      "created_at": "2025-10-15T11:00:00Z",
+      "updated_at": "2025-12-05T14:00:00Z"
+    }
+  ],
+  "source": "demo",
+  "demo": true
+}
