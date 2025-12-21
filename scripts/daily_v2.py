@@ -467,9 +467,13 @@ class DailyAutomation:
                 logger.warning(f"Skipping invalid action item: {e}")
                 continue
             except RateLimitExceededException as e:
-                logger.error(
-                    f"❌ GitHub rate limit reached while creating issue for: {item[:50]}..."
-                )
+                logger.error(f"❌ GitHub rate limit reached while creating issue for: {item[:50]}...")
+                # Additional context from remote branch: include reset time if available
+                try:
+                    reset_time = e.data.get('reset', 'unknown')
+                except Exception:
+                    reset_time = 'unknown'
+                logger.error(f"   Rate limit resets at: {reset_time}")
                 logger.error("   Wait before retrying or reduce request volume.")
                 logger.debug(f"GitHub rate limit details: {e}")
             except UnknownObjectException as e:
