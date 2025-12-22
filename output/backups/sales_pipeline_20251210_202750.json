@@ -1,0 +1,114 @@
+{
+  "timestamp": "2025-12-10T20:27:50.053824+00:00",
+  "source": "demo",
+  "total_pipeline_value": 500000,
+  "deals_count": 8,
+  "deals": [
+    {
+      "id": "DEAL-001",
+      "name": "Enterprise Platform Migration - Acme Corp",
+      "value": 85000,
+      "stage": "Proposal Sent",
+      "probability": 60,
+      "close_date": "2025-12-25",
+      "contact": "Sarah Johnson",
+      "company": "Acme Corp"
+    },
+    {
+      "id": "DEAL-002",
+      "name": "API Integration Services - TechStart Inc",
+      "value": 45000,
+      "stage": "Negotiation",
+      "probability": 75,
+      "close_date": "2025-12-18",
+      "contact": "Mike Chen",
+      "company": "TechStart Inc"
+    },
+    {
+      "id": "DEAL-003",
+      "name": "Automation Consulting - Global Solutions",
+      "value": 120000,
+      "stage": "Discovery",
+      "probability": 30,
+      "close_date": "2026-01-24",
+      "contact": "Emma Davis",
+      "company": "Global Solutions"
+    },
+    {
+      "id": "DEAL-004",
+      "name": "Data Pipeline Setup - StartupXYZ",
+      "value": 15000,
+      "stage": "Closed Won",
+      "probability": 100,
+      "close_date": "2025-12-07",
+      "contact": "James Wilson",
+      "company": "StartupXYZ"
+    },
+    {
+      "id": "DEAL-005",
+      "name": "Security Audit - FinTech Partners",
+      "value": 20000,
+      "stage": "Proposal Sent",
+      "probability": 50,
+      "close_date": "2025-12-30",
+      "contact": "Lisa Brown",
+      "company": "FinTech Partners"
+    },
+    {
+      "id": "DEAL-006",
+      "name": "Cloud Infrastructure Migration - RetailCo",
+      "value": 95000,
+      "stage": "Discovery",
+      "probability": 40,
+      "close_date": "2026-01-14",
+      "contact": "David Martinez",
+      "company": "RetailCo"
+    },
+    {
+      "id": "DEAL-007",
+      "name": "DevOps Transformation - MediaGroup",
+      "value": 65000,
+      "stage": "Negotiation",
+      "probability": 70,
+      "close_date": "2025-12-22",
+      "contact": "Rachel Kim",
+      "company": "MediaGroup"
+    },
+    {
+      "id": "DEAL-008",
+      "name": "AI Implementation - HealthTech",
+      "value": 55000,
+      "stage": "Proposal Sent",
+      "probability": 55,
+      "close_date": "2025-12-28",
+      "contact": "Tom Anderson",
+      "company": "HealthTech"
+    }
+  ],
+  "metrics": {
+    "active_deals": 7,
+    "closed_won": 1,
+    "avg_deal_size": 62500,
+    "weighted_pipeline": 296250,
+    "stages": {
+      "Discovery": 2,
+      "Proposal Sent": 3,
+      "Negotiation": 2,
+      "Closed Won": 1
+    }
+  },
+  "top_opportunities": [
+    {
+      "name": "Automation Consulting",
+      "value": 120000
+    },
+    {
+      "name": "Cloud Infrastructure Migration",
+      "value": 95000
+    },
+    {
+      "name": "Enterprise Platform Migration",
+      "value": 85000
+    }
+  ]
+}

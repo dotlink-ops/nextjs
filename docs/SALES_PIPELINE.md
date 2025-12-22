@@ -1,5 +1,33 @@
 # Sales Pipeline Automation
 
+<<<<<<< HEAD
+Automated data pull for sales pipeline tracking and reporting.
+
+## Overview
+
+This feature provides automated pulling of sales pipeline data from various CRM systems or data sources. The data is structured and made available via API endpoints for consumption by the Next.js dashboard.
+
+## Features
+
+- **Multiple Data Sources**: Supports demo mode, Salesforce, HubSpot, CSV, and other sources (extensible)
+- **Automated Pulls**: Can be run manually or scheduled via cron/GitHub Actions
+- **Structured Output**: Saves data in JSON format for easy consumption
+- **API Endpoint**: Exposes data via `/api/sales-pipeline`
+- **Backup System**: Automatically creates timestamped backups
+
+## Quick Start
+
+### Demo Mode (No API Keys Required)
+
+```bash
+# Pull demo sales pipeline data
+python3 scripts/pull_sales_pipeline.py --demo
+
+# View the output
+cat output/sales_pipeline.json | jq
+```
+
+=======
 ## Overview
 
 The sales pipeline automation module provides automated data collection from CRM systems and sales tracking tools. It integrates seamlessly with the existing daily automation workflow.
@@ -27,86 +55,179 @@ This will:
 3. Create timestamped cache file in `output/sales_cache/`
 4. Include pipeline summary in `output/daily_summary.json`
 
+>>>>>>> main
 ### Production Mode
 
 1. **Configure Environment Variables**
 
-Create or edit `.env.local`:
+<<<<<<< HEAD
+   Edit `.env.local`:
+   ```bash
+   # Data source: demo, salesforce, hubspot, csv
+   SALES_PIPELINE_SOURCE=demo
+   
+   # API key (only needed for non-demo sources)
+   # SALES_PIPELINE_API_KEY=your-api-key-here
+   ```
 
-```bash
-# Sales Pipeline Configuration
-SALES_PIPELINE_SOURCE=hubspot  # Options: demo, hubspot, salesforce, pipedrive
-SALES_PIPELINE_API_KEY=your-api-key-here
-SALES_PIPELINE_ENDPOINT=https://api.hubspot.com/crm/v3/objects/deals  # Optional
-SALES_PIPELINE_CACHE=/path/to/cache  # Optional, defaults to output/sales_cache
-```
+2. **Run the Script**
 
-2. **Run Automation**
-
-```bash
-# Run with live API calls
-python3 scripts/daily_v2.py
-```
+   ```bash
+   python3 scripts/pull_sales_pipeline.py
+   ```
 
 ## Data Structure
 
-### Sales Pipeline Output (`sales_pipeline.json`)
+The pipeline data includes:
 
 ```json
 {
-  "timestamp": "2025-12-10T20:21:45.039161+00:00",
-  "total_leads": 5,
-  "total_value": 462000.0,
-  "weighted_value": 254500.0,
-  "stage_breakdown": {
-    "Qualification": 2,
-    "Proposal": 1,
-    "Negotiation": 1,
-    "Closed Won": 1
-  },
-  "leads": [
+  "timestamp": "2025-12-10T20:21:50.489927+00:00",
+  "source": "demo",
+  "total_pipeline_value": 285000,
+  "deals_count": 8,
+  "deals": [
     {
-      "id": "lead-001",
-      "name": "Enterprise Integration Project",
-      "company": "TechCorp Solutions",
-      "stage": "Qualification",
-      "value": 150000.0,
-      "probability": 0.3,
-      "owner": "Sales Rep A",
-      "created_at": "2025-11-15T10:00:00Z",
-      "updated_at": "2025-12-09T14:30:00Z"
+      "id": "DEAL-001",
+      "name": "Enterprise Platform Migration - Acme Corp",
+      "value": 85000,
+      "stage": "Proposal Sent",
+      "probability": 60,
+      "close_date": "2025-12-25",
+      "contact": "Sarah Johnson",
+      "company": "Acme Corp"
     }
   ],
-  "source": "demo",
-  "demo": true
-}
-```
-
-### Daily Summary Integration
-
-The pipeline summary is automatically included in `daily_summary.json`:
-
-```json
-{
-  "metadata": {
-    "sales_pipeline_enabled": true
+  "metrics": {
+    "active_deals": 7,
+    "closed_won": 1,
+    "avg_deal_size": 35625,
+    "weighted_pipeline": 159750
   },
-  "sales_pipeline_summary": {
+  # Sales Pipeline Automation
+
+  Automated data collection and reporting for the sales pipeline.
+
+  ## Overview
+
+  The sales pipeline automation module provides automated data collection from CRM systems and sales tracking tools. It integrates with the existing daily automation workflow and supports multiple data sources (demo data, CSV/JSON files, and popular CRMs such as HubSpot, Salesforce, and Pipedrive).
+
+  ## Features
+
+  - Automated data pulls (scheduled or on-demand)
+  - Multiple CRM/provider support (HubSpot, Salesforce, Pipedrive, CSV/JSON, demo)
+  - Demo mode for local development and testing
+  - Historical tracking with timestamped cache snapshots (`output/sales_cache`)
+  - Structured JSON output for API consumption and dashboard integration
+  - Inclusion of pipeline summary into `daily_summary.json`
+
+  ## Quick Start
+
+  ### Demo Mode (no API keys required)
+
+  ```bash
+  # Run automation with demo sales pipeline data
+  python3 scripts/daily_v2.py --demo
+
+  # Or run the dedicated sales pipeline pull (legacy helper)
+  python3 scripts/sales_pipeline_pull.py --demo
+
+  # View the output
+  cat output/sales_pipeline.json | jq
+  ```
+
+  This will:
+  1. Pull demo sales pipeline data
+  2. Save to `output/sales_pipeline.json`
+  3. Create a timestamped cache file in `output/sales_cache/`
+  4. Include pipeline summary in `output/daily_summary.json`
+
+  ### Production Mode (live API)
+
+  1. Create or edit `.env.local` with your provider config:
+
+  ```bash
+  # Sales Pipeline Configuration
+  SALES_PIPELINE_SOURCE=hubspot  # Options: demo, hubspot, salesforce, pipedrive, csv, json
+  SALES_PIPELINE_API_KEY=your-api-key-here
+  SALES_PIPELINE_ENDPOINT=https://api.hubspot.com/crm/v3/objects/deals  # Optional
+  SALES_PIPELINE_CACHE=./output/sales_cache  # Optional
+  ```
+
+  2. Run automation with live API calls:
+
+  ```bash
+  python3 scripts/daily_v2.py
+  ```
+
+  ## Data Structure
+
+  The `sales_pipeline.json` output contains a snapshot of the pipeline. Example schema:
+
+  ```json
+  {
+    "timestamp": "2025-12-10T20:21:45.039161+00:00",
+    "source": "demo",
     "total_leads": 5,
     "total_value": 462000.0,
     "weighted_value": 254500.0,
-    "timestamp": "2025-12-10T20:21:45.039161+00:00"
+    "stage_breakdown": {
+      "Qualification": 2,
+      "Proposal": 1,
+      "Negotiation": 1,
+      "Closed Won": 1
+    },
+    "leads": [
+      {
+        "id": "lead-001",
+        "name": "Enterprise Integration Project",
+        "company": "TechCorp Solutions",
+        "stage": "Qualification",
+        "value": 150000.0,
+        "probability": 0.3,
+        "owner": "Sales Rep A",
+        "created_at": "2025-11-15T10:00:00Z",
+        "updated_at": "2025-12-09T14:30:00Z"
+      }
+    ],
+    "metadata": {
+      "demo": true
+    }
   }
-}
-```
+  ```
 
-## CRM Integration
+  ## API Endpoint
 
-### HubSpot (Placeholder)
+  ### GET `/api/sales-pipeline`
 
-```bash
-SALES_PIPELINE_SOURCE=hubspot
-SALES_PIPELINE_API_KEY=your-hubspot-api-key
+  Returns the latest sales pipeline snapshot. Example:
+
+  ```bash
+  curl http://localhost:3000/api/sales-pipeline | jq
+  ```
+
+  ## Extending to New Data Sources
+
+  To add support for a new CRM or data source:
+
+  1. Add integration code (e.g., in `scripts/lib/clients.py`) to pull and normalize data into the repository schema.
+  2. Update source detection to include the new provider (e.g., in `pull_pipeline_data()` or configuration parsing).
+  3. Configure environment variables for credentials and endpoints in `.env.local`.
+
+  Example integration stub:
+
+  ```python
+  def _pull_from_your_crm(self) -> Dict[str, Any]:
+      """Pull data from Your CRM API and return normalized pipeline dict."""
+      # Implement API calls and transformation here
+      return pipeline_data
+  ```
+
+  ## Notes
+
+  - The feature supports both a dedicated pull helper (`scripts/sales_pipeline_pull.py`) and integration into the daily runner (`scripts/daily_v2.py`).
+  - Outputs are saved under `output/` and are safe to inspect in demo mode.
+
 ```
 
 **Note**: HubSpot integration is planned but not yet implemented. Currently falls back to demo data.
@@ -348,3 +469,4 @@ chmod 755 output/sales_cache
 **Last Updated:** 2025-12-10  
 **Version:** 1.0.0  
 **Module:** Sales Pipeline Automation
+>>>>>>> main

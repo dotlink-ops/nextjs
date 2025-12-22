@@ -18,93 +18,38 @@ This guide walks you through setting up the nexus-core automation system locally
 
 ## Prerequisites
 
-Before you begin, ensure you have:
+- **Node.js 18+** (20 or 22 recommended)
+- **Python 3.11+**
+- **Git**
 
-- **Python 3.12 or higher** - Check with `python3 --version`
-- **Node.js 22 or higher** - Check with `node --version`
-- **Git** - Check with `git --version`
-- **GitHub account** - For API integration
-- **OpenAI account** (optional) - For AI features, or use `--demo` mode
-
-### Installing Prerequisites
-
-#### macOS (Homebrew)
-```bash
-brew install python@3.12 node git
-```
-
-#### Ubuntu/Debian
-```bash
-sudo apt update
-sudo apt install python3.12 python3-pip nodejs npm git
-```
-
-#### Windows (Chocolatey)
-```bash
-choco install python nodejs git
-```
-
----
-
-## Initial Setup
-
-### 1. Clone the Repository
+## Quick Start
 
 ```bash
 git clone https://github.com/dotlink-ops/nexus-core.git
 cd nexus-core
 ```
 
-### 2. Set Up Python Virtual Environment
-
-```bash
-# Create virtual environment
-python3 -m venv .venv
-
-# Activate virtual environment
-source .venv/bin/activate  # macOS/Linux
-# or
-.venv\Scripts\activate  # Windows
-
-# Upgrade pip
-pip install --upgrade pip
-
-# Install Python dependencies
-pip install -r scripts/requirements.txt
-```
-
-**Note:** Always activate the virtual environment before running Python scripts.
-
-### 3. Set Up Node.js Dependencies
-
-```bash
-# Install frontend dependencies
-npm install
-
-# Verify installation
-npm run build
-```
-
----
-
 ## Environment Configuration
 
 ### 1. Create Environment File
 
-Copy the example environment file to create your local configuration:
-
 ```bash
-cp .env.local.example .env.local
+cp .env.example .env.local
 ```
 
 ### 2. Configure Required Variables
 
-Edit `.env.local` with your preferred text editor:
+Edit `.env.local` with your actual values:
 
 ```bash
-nano .env.local
-# or
-code .env.local
+# Required for production mode
+OPENAI_API_KEY=sk-...          # Get from https://platform.openai.com/api-keys
+GITHUB_TOKEN=ghp_...           # Get from https://github.com/settings/tokens (repo scope)
+REPO_NAME=owner/repo           # Your target repository
+
+# Optional
+OUTPUT_DIR=./output
+NOTES_SOURCE=./output/notes
 ```
 
 #### Required Variables
@@ -159,97 +104,98 @@ Your GitHub token needs the following scopes:
 You can run the automation in demo mode without an OpenAI API key:
 
 ```bash
+# Check .env.local exists and is gitignored
+ls -la .env.local
+git status .env.local   # Should show: ignored
+```
+
+## Daily Runner Sanity Checks
+
+### Demo Mode (No API Keys Required)
+
+Test the automation without API calls:
+
+```bash
+# Run in demo mode
 python3 scripts/daily_v2.py --demo
+
+# Expected output:
+# ✓ Ingested 3 notes
+# ✓ Generated summary (demo mode)
+# ✓ Output saved to output/daily_summary.json
 ```
 
----
-
-## Running the Automation
-
-### 1. Demo Mode (No API Keys Required)
-
-Perfect for testing and demonstrations:
+### Verify Output
 
 ```bash
-source .venv/bin/activate
-python3 scripts/daily_v2.py --demo
+# Check output file exists
+ls -la output/daily_summary.json
+
+# Validate JSON format
+python3 -c "import json; json.load(open('output/daily_summary.json'))"
+
+# View contents
+cat output/daily_summary.json | python3 -m json.tool
 ```
 
-**What demo mode does:**
-- Uses realistic test data
-- Simulates API responses
-- Creates example outputs
-- Does not make real API calls
-- Safe to run repeatedly
+### Production Mode (API Keys Required)
 
-### 2. Dry-Run Mode (Validates Configuration)
-
-Tests your configuration without making changes:
+Once `.env.local` is configured:
 
 ```bash
-source .venv/bin/activate
-python3 scripts/daily_v2.py --dry-run
-```
+# Activate virtual environment
+source venv/bin/activate
 
-**What dry-run mode does:**
-- Validates API keys
-- Simulates API calls
-- Shows what would be created
-- Does not create GitHub issues
-- Does not commit changes
-
-### 3. Production Mode (Full Automation)
-
-Runs the complete automation workflow:
-
-```bash
-source .venv/bin/activate
+# Run production mode
 python3 scripts/daily_v2.py
+
+# Expected output:
+# ✓ API clients initialized successfully
+# ✓ Generated summary using gpt-4-turbo-preview
+# ✓ Created X GitHub issues
 ```
 
-**What production mode does:**
-- Reads notes from `output/notes/`
-- Calls OpenAI API for summarization
-- Creates GitHub issues from action items
-- Saves results to `output/daily_summary.json`
-- Creates audit logs in `output/audit_*.json`
+### Full Validation Suite
 
-### 4. View Results
+Run all checks:
 
 ```bash
-# View latest summary
-cat output/daily_summary.json | jq
-
-# View audit logs
-ls -lt output/audit_*.json | head -5
-
-# View latest audit
-cat $(ls -t output/audit_*.json | head -1) | jq
+bash scripts/validate.sh
 ```
 
----
+This validates:
+- Python environment
+- Dependencies
+- Configuration files
+- Automation execution
+- Output file format
+- Next.js build
 
-## Verification & Sanity Checks
+## Common Issues
 
-### Daily Runner Sanity Check
+| Issue | Solution |
+|-------|----------|
+| `ModuleNotFoundError` | `pip install -r scripts/requirements.txt` |
+| `Missing OPENAI_API_KEY` | Edit `.env.local` or use `--demo` flag |
+| `Invalid JSON output` | Re-run `python3 scripts/daily_v2.py --demo` |
+| `Permission denied` | `chmod +x scripts/*.sh run-daily.sh` |
 
-Run this checklist before relying on automation in production:
+## Next.js Frontend
 
-#### ✅ Environment Setup
+After running the automation:
 
 ```bash
-# 1. Verify Python version
-python3 --version  # Should be 3.12+
+# Start development server
+npm run dev
 
-# 2. Verify virtual environment is active
-which python3  # Should show path to .venv/bin/python3
+# Open browser
+open http://localhost:3000
 
-# 3. Verify dependencies installed
-pip list | grep openai  # Should show openai package
-pip list | grep requests  # Should show requests package
+# Test API endpoint
+curl http://localhost:3000/api/daily-summary
 ```
 
-#### ✅ Environment Variables
+## Security Notes
 
 ```bash
 # 4. Verify .env.local exists

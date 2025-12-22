@@ -1,0 +1,8 @@
+id,company,contact_name,email,phone,stage,value,probability,expected_close_date,notes,created_at,updated_at
+LEAD-001,TechCorp Solutions,Sarah Johnson,sarah.johnson@techcorp.example,+1-555-0123,qualified,50000,60,2025-12-31,Interested in enterprise plan. Follow up next week.,2025-11-15T10:00:00Z,2025-12-07T00:00:00Z
+LEAD-002,Global Innovations Inc,Michael Chen,m.chen@globalinno.example,+1-555-0124,proposal,125000,75,2025-12-20,Sent proposal. Waiting for decision from exec team.,2025-10-20T14:30:00Z,2025-12-07T00:00:00Z
+LEAD-003,StartupXYZ,Emily Rodriguez,emily@startupxyz.example,,lead,15000,30,2026-01-15,Initial contact made. Needs more information.,2025-12-01T09:15:00Z,2025-12-07T00:00:00Z
+LEAD-004,Enterprise Systems LLC,David Thompson,d.thompson@entsys.example,+1-555-0126,negotiation,200000,85,2025-12-15,Final contract negotiation. Very close to closing.,2025-09-10T11:00:00Z,2025-12-07T00:00:00Z
+LEAD-005,Mid-Market Corp,Jennifer Lee,jlee@midmarket.example,+1-555-0127,closed-won,75000,100,2025-11-30,Contract signed! Implementation starts next month.,2025-08-05T13:45:00Z,2025-11-30T16:00:00Z
+LEAD-006,SmallBiz Partners,Robert Kim,robert@smallbiz.example,+1-555-0128,lead,8000,20,2026-02-01,Expressed interest. Scheduling demo call.,2025-12-05T15:20:00Z,2025-12-07T00:00:00Z
+LEAD-007,Enterprise Cloud Inc,Amanda White,a.white@entcloud.example,+1-555-0129,qualified,180000,70,2025-12-28,Technical evaluation in progress. Strong fit.,2025-11-01T10:30:00Z,2025-12-07T00:00:00Z

@@ -1,0 +1,24 @@
+{
+  "date": "2025-12-10",
+  "created_at": "2025-12-10T20:20:45.590480+00:00",
+  "repo": null,
+  "summary_bullets": [
+    "Processed 2 notes from daily workflow",
+    "Identified automation opportunities in sales pipeline",
+    "Found bug in report export requiring immediate fix"
+  ],
+  "action_items": [
+    "Implement automated data pull for sales pipeline",
+    "Fix daily report export script failing on edge cases",
+    "Draft investor-ready bulleted summary for next meeting"
+  ],
+  "assessment": "Key outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.",
+  "issues_created": 0,
+  "issues": [],
+  "raw_text": "Summary:\nKey outcomes: 3 actionable items identified. Sales pipeline automation is high-priority.\n\nActions:\n- Implement automated data pull for sales pipeline\n- Fix daily report export script failing on edge cases\n- Draft investor-ready bulleted summary for next meeting",
+  "metadata": {
+    "runner_version": "2.0.0",
+    "demo_mode": true,
+    "notes_count": 2
+  }
+}
