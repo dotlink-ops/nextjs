@@ -1,6 +1,6 @@
 {
-  "date": "2025-12-30",
-  "created_at": "2025-12-30T14:29:43.937439+00:00",
+  "date": "2025-12-31",
+  "created_at": "2025-12-31T14:27:59.027666+00:00",
   "source": "csv",
   "leads": [
     {
@@ -15,7 +15,7 @@
       "expected_close_date": "2025-12-31",
       "notes": "Interested in enterprise plan. Follow up next week.",
       "created_at": "2025-11-15T10:00:00Z",
-      "updated_at": "2025-12-30T14:29:43.937231+00:00"
+      "updated_at": "2025-12-31T14:27:59.027396+00:00"
     },
     {
       "id": "LEAD-002",
@@ -29,7 +29,7 @@
       "expected_close_date": "2025-12-20",
       "notes": "Sent proposal. Waiting for decision from exec team.",
       "created_at": "2025-10-20T14:30:00Z",
-      "updated_at": "2025-12-30T14:29:43.937231+00:00"
+      "updated_at": "2025-12-31T14:27:59.027396+00:00"
     },
     {
       "id": "LEAD-003",
@@ -43,7 +43,7 @@
       "expected_close_date": "2026-01-15",
       "notes": "Initial contact made. Needs more information.",
       "created_at": "2025-12-01T09:15:00Z",
-      "updated_at": "2025-12-30T14:29:43.937231+00:00"
+      "updated_at": "2025-12-31T14:27:59.027396+00:00"
     },
     {
       "id": "LEAD-004",
@@ -57,7 +57,7 @@
       "expected_close_date": "2025-12-15",
       "notes": "Final contract negotiation. Very close to closing.",
       "created_at": "2025-09-10T11:00:00Z",
-      "updated_at": "2025-12-30T14:29:43.937231+00:00"
+      "updated_at": "2025-12-31T14:27:59.027396+00:00"
     },
     {
       "id": "LEAD-005",
