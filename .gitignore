@@ -47,6 +47,10 @@ output/audit_*.json
 output/sales_cache/
 output/sales_pipeline.json
 
+# Backups and generated backup artifacts
+output/backups/
+output/*_results.json
+
 # IDE
 .idea/
 .vscode/
